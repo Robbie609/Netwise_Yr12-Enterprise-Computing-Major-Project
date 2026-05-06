@@ -12,8 +12,8 @@
         :root {
             --bg: #020204;
             --cyan: #00f2ff;
-            --purple: #9d00ff;
-            --red: #ff003c;
+            --purple: #0025cc;
+            --red: #00ffbf;
             --text-main: #ffffff;
             --text-muted: #8a8a9e;
             --glass: rgba(255, 255, 255, 0.03);
@@ -191,7 +191,7 @@
         <section class="section" id="intro-trigger">
             <div class="container">
                 <div style="max-width: 600px;">
-                    <h2 style="font-size: 3.5rem; margin-bottom: 2rem;">Welcome to the <span style="color:var(--cyan)">Simulation.</span></h2>
+                    <h2 style="font-size: 3.5rem; margin-bottom: 2rem;">Welcome to <span style="color:var(--cyan)">Netwiser.</span></h2>
                     <p style="font-size: 1.3rem; color: var(--text-muted);">Netwiser isn't a textbook. It's a digital training ground where Year 6-8 students learn to outsmart hackers before they ever face a real threat.</p>
                 </div>
             </div>
@@ -308,18 +308,20 @@
         // --- 3. THE NETWISER CORE (3D OBJECT) ---
         // A complex geometric node: Octahedron inside a wireframe sphere
         const coreGroup = new THREE.Group();
-        
+        const core = new THREE.Mesh(
+        new THREE.OctahedronGeometry(.35, 1),
+        new THREE.MeshPhongMaterial({ color: 0xff2a2a, emissive: 0xff2a2a, emissiveIntensity: 3, wireframe: true })
+        );
         const coreInner = new THREE.Mesh(
-            new THREE.OctahedronGeometry(4, 0),
-            new THREE.MeshPhongMaterial({ color: 0x00f2ff, emissive: 0x00f2ff, emissiveIntensity: 2, wireframe: true })
+            new THREE.OctahedronGeometry(3, 3),
+            new THREE.MeshPhongMaterial({ color: 0x00f2ff, emissive: 0x00f2ff, emissiveIntensity: 6, wireframe: true })
         );
         const coreOuter = new THREE.Mesh(
-            new THREE.IcosahedronGeometry(6, 1),
-            new THREE.MeshBasicMaterial({ color: 0x9d00ff, wireframe: true, transparent: true, opacity: 0.3 })
+            new THREE.IcosahedronGeometry(8, 1),
+            new THREE.MeshBasicMaterial({ color: 0x001a66, wireframe: true, transparent: true, opacity: 0.4 })
         );
-        
-        coreGroup.add(coreInner, coreOuter);
-        coreGroup.position.set(0, 0, -50); // Start deep in portal
+        coreGroup.add(core, coreInner, coreOuter);
+        coreGroup.position.set(0, 0, -1000); // Start deep in portal
         scene.add(coreGroup);
 
         const ambient = new THREE.AmbientLight(0xffffff, 0.5);
@@ -436,7 +438,9 @@
             coreInner.rotation.x += 0.01;
             coreInner.rotation.y += 0.01;
             coreOuter.rotation.z -= 0.005;
-
+            core.rotation.x += 0.1;
+            core.rotation.y += 0.1;
+            core.rotation.z += 0.1;
             renderer.render(scene, camera);
         }
         animate();
