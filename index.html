@@ -201,15 +201,15 @@
             <div class="container">
                 <div class="interactive-grid">
                     <div class="feature-card" data-tilt>
-                        <h3>Phish Hunter</h3>
+                        <h3>Phishing emails</h3>
                         <p>Spot the fake emails and suspicious DMs. Learn the "red flag" patterns that hackers use to steal passwords.</p>
                     </div>
                     <div class="feature-card" data-tilt>
-                        <h3>Social Shield</h3>
+                        <h3>Social Engineering</h3>
                         <p>Interact with simulated influencers and gamers. Discover how "Social Engineering" works in the apps you use daily.</p>
                     </div>
                     <div class="feature-card" data-tilt>
-                        <h3>Web Guardian</h3>
+                        <h3>Fake Websites</h3>
                         <p>Identify malicious websites and hidden downloads. Practice safe browsing in a world of 1 click traps.</p>
                     </div>
                 </div>
@@ -435,9 +435,10 @@
             });
 
             // Core Self-Rotation
-            coreInner.rotation.x += 0.01;
-            coreInner.rotation.y += 0.01;
-            coreOuter.rotation.z -= 0.005;
+            coreInner.rotation.x += 0.5;
+            coreInner.rotation.y += 0.5;
+            coreOuter.rotation.z -= 0.75;
+            coreOuter.rotation.x += 0.75;
             core.rotation.x += 0.1;
             core.rotation.y += 0.1;
             core.rotation.z += 0.1;
