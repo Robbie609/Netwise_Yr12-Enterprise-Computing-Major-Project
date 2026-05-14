@@ -32,3 +32,15 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+# Seeing updated un hashed passwords and usernames
+def see_updated_credentials():
+    conn = sqlite3.connect(DB_NAME)
+    cursor = conn.cursor()
+    cursor.execute("SELECT username, password_hash FROM student_accounts")
+    rows = cursor.fetchall()
+    
+    for username, password_hash in rows:
+        print(f"Username: {username}, Password Hash: {password_hash}")
+    conn.close()
