@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Netwiser | Digital Learning Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #030308;
+            --lightblue: #00f2ff;
+            --darkblue: #0055ff;
+            --cyan: #00ffbf;
+            --text-main: #ffffff;
+            --text-muted: #9ba1b0;
+            --glass: rgba(20, 25, 40, 0.4);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --accent-glow: rgba(0, 242, 255, 0.15);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            background-color: var(--bg);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            height: 100vh;
+            display: flex;
+            overflow: hidden;
+        }
+
+        /* --- IMMERSIVE BACKGROUND --- */
+        .bg-layer {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2;
+            background: radial-gradient(circle at center, #0a0e1c 0%, var(--bg) 100%);
+        }
+
+        .cyber-grid {
+            position: absolute; width: 200%; height: 200%; top: -50%; left: -50%;
+            background-image: 
+                linear-gradient(var(--glass-border) 1px, transparent 1px), 
+                linear-gradient(90deg, var(--glass-border) 1px, transparent 1px);
+            background-size: 50px 50px;
+            transform: perspective(800px) rotateX(60deg);
+            animation: gridMove 15s linear infinite;
+            opacity: 0.2;
+        }
+
+        .scan-line {
+            position: absolute; width: 100%; height: 4px;
+            background: linear-gradient(to right, transparent, var(--lightblue), transparent);
+            opacity: 0.3; top: -10%;
+            animation: scan 8s linear infinite;
+            box-shadow: 0 0 20px var(--lightblue);
+        }
+
+        .ambient-orb {
+            position: absolute; border-radius: 50%; filter: blur(100px);
+            animation: floatOrb 12s infinite alternate ease-in-out;
+            z-index: -1;
+        }
+
+        .orb-1 { width: 600px; height: 600px; background: rgba(0, 85, 255, 0.15); top: -10%; left: 40%; }
+        .orb-2 { width: 500px; height: 500px; background: rgba(0, 255, 191, 0.1); bottom: -10%; left: -5%; animation-delay: -5s; }
+
+        @keyframes gridMove { 0% { transform: perspective(800px) rotateX(60deg) translateY(0); } 100% { transform: perspective(800px) rotateX(60deg) translateY(50px); } }
+        @keyframes scan { 0% { top: -10%; opacity: 0; } 10% { opacity: 0.3; } 90% { opacity: 0.3; } 100% { top: 110%; opacity: 0; } }
+        @keyframes floatOrb { 0% { transform: translate(0, 0) scale(1); } 100% { transform: translate(50px, 80px) scale(1.1); } }
+
+        /* --- LAYOUT --- */
+        .branding-side { flex: 1.2; display: flex; flex-direction: column; justify-content: center; padding: 10%; position: relative; }
+        .login-side { flex: 1; display: flex; align-items: center; justify-content: center; padding: 40px; position: relative; }
+
+        .logo { font-family: 'Space Grotesk', sans-serif; color: var(--lightblue); letter-spacing: 3px; font-weight: 700; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 10px; }
+        .logo::before { content: ''; display: inline-block; width: 12px; height: 12px; background: var(--cyan); border-radius: 50%; box-shadow: 0 0 10px var(--cyan); }
+        
+        h1 { font-family: 'Space Grotesk', sans-serif; font-size: 3.5rem; line-height: 1.15; margin-bottom: 1.5rem; background: linear-gradient(to right, #fff, #b8c1d1); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .sub { color: var(--text-muted); font-size: 1.15rem; max-width: 420px; line-height: 1.6; font-weight: 300; }
+
+        /* --- LOGIN PANEL --- */
+        .glass-backdrop {
+            position: absolute; width: 480px; height: 500px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0));
+            border-radius: 30px; transform: rotate(-3deg) scale(1.05); z-index: 0;
+            border: 1px solid rgba(255,255,255,0.02);
+        }
+
+        .glass-panel {
+            background: var(--glass); backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px);
+            border: 1px solid var(--glass-border); border-radius: 24px; padding: 3.5rem;
+            width: 100%; max-width: 480px; z-index: 1; position: relative;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255,255,255,0.1);
+            animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes slideUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+
+        h2 { font-family: 'Space Grotesk', sans-serif; margin-bottom: 2rem; font-size: 1.8rem; font-weight: 500; }
+
+        .input-box { position: relative; margin-bottom: 1.5rem; }
+        
+        input[type="text"], input[type="password"] {
+            width: 100%; background: rgba(0, 0, 0, 0.2); border: 1px solid var(--glass-border);
+            padding: 1.2rem; border-radius: 12px; color: white; font-size: 1rem;
+            transition: all 0.3s ease; box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        input:focus { outline: none; border-color: var(--lightblue); background: rgba(0, 0, 0, 0.4); box-shadow: inset 0 2px 4px rgba(0,0,0,0.2), 0 0 15px var(--accent-glow); }
+        
+        /* --- PASSWORD TOGGLE --- */
+        .pwd-toggle {
+            position: absolute; right: 15px; top: 50%; transform: translateY(-50%);
+            cursor: pointer; opacity: 0.5; transition: 0.3s;
+            display: flex; align-items: center; justify-content: center;
+            width: 30px; height: 30px; border-radius: 50%;
+        }
+        
+        input[type="password"] { padding-right: 3rem; }
+
+        .pwd-toggle:hover { opacity: 1; background: rgba(255,255,255,0.05); }
+        .pwd-toggle svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transition: all 0.3s ease; }
+        
+        /* The "closed eye" slash line */
+        .pwd-slash { stroke-dasharray: 25; stroke-dashoffset: 0; transition: stroke-dashoffset 0.3s ease; }
+        .pwd-toggle.visible .pwd-slash { stroke-dashoffset: 25; }
+
+        /* --- BUTTON & INTERACTIONS --- */
+        .btn-access {
+            width: 100%; padding: 1.2rem; border-radius: 12px; border: none;
+            background: linear-gradient(135deg, var(--darkblue), #0099ff);
+            color: white; font-weight: 600; font-family: 'Space Grotesk'; cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); margin-top: 1rem;
+            position: relative; overflow: hidden;
+        }
+
+        .btn-access:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(0, 85, 255, 0.4); }
+        .btn-access::before {
+            content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
+            background: linear-gradient(to right, transparent, rgba(255,255,255,0.2), transparent);
+            transform: skewX(-20deg); transition: 0.5s;
+        }
+        .btn-access:hover::before { left: 150%; }
+
+        .error-shake { animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both; border: 1px solid #ff4b4b !important; }
+        @keyframes shake { 10%, 90% { transform: translateX(-2px); } 20%, 80% { transform: translateX(4px); } 30%, 50%, 70% { transform: translateX(-6px); } 40%, 60% { transform: translateX(6px); } }
+        .error-text { color: #ff4b4b; font-size: 0.9rem; margin-bottom: 1rem; display: none; text-align: center; font-weight: 500; }
+
+        @media (max-width: 900px) { .branding-side { display: none; } .glass-backdrop { display: none; } }
+    </style>
+</head>
+<body>
+
+    <div class="bg-layer">
+        <div class="cyber-grid"></div>
+        <div class="scan-line"></div>
+        <div class="ambient-orb orb-1"></div>
+        <div class="ambient-orb orb-2"></div>
+    </div>
+
+    <div class="branding-side">
+        <div class="logo">NETWISER</div>
+        <h1>Welcome to the<br>Digital Future.</h1>
+        <p class="sub">Interactive digital learning designed for the next generation. Explore networks, solve puzzles, and grow your tech skills in a safe environment.</p>
+    </div>
+
+    <div class="login-side">
+        <div class="glass-backdrop"></div>
+        <div class="glass-panel" id="loginCard">
+            <h2>Student Portal</h2>
+            <div id="errorMsg" class="error-text">Oops! Incorrect username or password.</div>
+            <form id="loginForm">
+                <div class="input-box">
+                    <input type="text" id="userInput" placeholder="Student ID or Email" required autocomplete="off">
+                </div>
+                <div class="input-box">
+                    <input type="password" id="passInput" placeholder="Password" required>
+                    <div class="pwd-toggle" id="togglePassword" title="Show/Hide Password">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                            <path class="pwd-slash" d="M3 3l18 18"></path>
+                        </svg>
+                    </div>
+                </div>
+                
+                <div style="display: flex; justify-content: space-between; margin-bottom: 1.5rem; font-size: 0.85rem; color: var(--text-muted);">
+                    <label style="display:flex; align-items:center; gap:8px; cursor:pointer;">
+                        <input type="checkbox" style="width:14px; height:14px; cursor:pointer;"> Keep me logged in
+                    </label>
+                    <a href="#" style="color: var(--lightblue); text-decoration: none; font-weight: 500;">Need help?</a>
+                </div>
+
+                <button type="submit" class="btn-access">Enter Academy</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // --- Password Toggle Logic ---
+        const togglePassword = document.getElementById('togglePassword');
+        const passInput = document.getElementById('passInput');
+
+        togglePassword.addEventListener('click', function () {
+            const isPassword = passInput.getAttribute('type') === 'password';
+            passInput.setAttribute('type', isPassword ? 'text' : 'password');
+            this.classList.toggle('visible');
+            
+            // Add a subtle glow pulse to the input box when toggled
+            passInput.style.boxShadow = "0 0 15px rgba(0, 242, 255, 0.3)";
+            setTimeout(() => { passInput.style.boxShadow = ""; }, 300);
+        });
+
+        // --- Simulated Login Logic for the Native Demo ---
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const card = document.getElementById('loginCard');
+            const err = document.getElementById('errorMsg');
+            
+            // Simulating a failed login to show the error state for the demo
+            // In a bridged application (e.g., Eel), this is where you'd call eel.validate_login(...)
+            err.style.display = "block";
+            card.classList.remove('error-shake');
+            void card.offsetWidth; // trigger reflow for animation restart
+            card.classList.add('error-shake');
+        });
+    </script>
+</body>
+</html>
