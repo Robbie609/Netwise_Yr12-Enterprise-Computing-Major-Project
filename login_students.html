@@ -38,8 +38,8 @@
         .branding-side { flex: 1.2; display: flex; flex-direction: column; justify-content: center; padding: 10%; position: relative; }
         .login-side { flex: 1; display: flex; align-items: center; justify-content: center; padding: 40px; position: relative; }
 
-        .logo-container { display: flex; align-items: center; gap: 15px; margin-bottom: 1.5rem; }
-        .logo-img { height: 32px; width: auto; object-fit: contain; }
+        .logo-container { display: flex; align-items: top; gap: 10px; margin-bottom: 1rem; }
+        .logo-img { height: 150px; width: auto; object-fit: contain; }
         .logo-text { font-family: 'Space Grotesk', sans-serif; color: var(--lightblue); letter-spacing: 3px; font-weight: 700; font-size: 1.2rem;}
         
         h1 { font-family: 'Space Grotesk', sans-serif; font-size: 3.5rem; line-height: 1.15; margin-bottom: 1.5rem; background: linear-gradient(to right, #fff, #b8c1d1); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
@@ -76,10 +76,8 @@
     <div class="branding-side">
         <div class="logo-container">
             <img src="Logo2.png" alt="Netwiser Icon" class="logo-img">
-            <div class="logo-text">NETWISER</div>
         </div>
         <h1>Welcome to the<br>Digital Future.</h1>
-        <p class="sub">Interactive digital learning designed for the next generation. Explore networks, solve puzzles, and grow your tech skills in a safe environment.</p>
     </div>
 
     <div class="login-side">
@@ -88,7 +86,7 @@
             <div id="errorMsg" class="error-text">Oops! Incorrect username or password.</div>
             <form id="loginForm">
                 <div class="input-box">
-                    <input type="text" id="userInput" placeholder="Student ID or Email" required autocomplete="off">
+                    <input type="text" id="userInput" placeholder="Student ID" required autocomplete="off">
                 </div>
                 <div class="input-box">
                     <input type="password" id="passInput" placeholder="Password" required>
@@ -155,8 +153,8 @@
         let targetMouse = { x: -1000, y: -1000 };
 
         const gridSize = 55;
-        const glowRadius = 300;
-        const ease = 0.08;
+        const glowRadius = 200;
+        const ease = 0.1;
 
         function resize() {
             width = canvas.width = window.innerWidth;
