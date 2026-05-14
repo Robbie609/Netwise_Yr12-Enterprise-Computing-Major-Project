@@ -34,13 +34,29 @@ if __name__ == "__main__":
     main()
 
 
-# Seeing updated un hashed passwords and usernames
-def see_updated_credentials():
+# Seeing updated username and password set:
+def verify_update(username: str, password: str):
     conn = sqlite3.connect(DB_NAME)
     cursor = conn.cursor()
-    cursor.execute("SELECT username, password_hash FROM student_accounts")
-    rows = cursor.fetchall()
-    
-    for username, password_hash in rows:
-        print(f"Username: {username}, Password Hash: {password_hash}")
+
+    hashed = hash_password(password)
+
+    cursor.execute("""
+        SELECT * FROM student_accounts
+        WHERE username = ? AND password_hash = ?
+    """, (username, hashed))
+
+    user = cursor.fetchone()
     conn.close()
+
+    if user:
+        print("Password update verified successfully.")
+    else:
+        print("Password update verification failed.")
+
+def verify():
+    print("Verify Password Update")
+    username = input("Enter username: ")
+    password = input("Enter password to verify: ")
+
+    verify_update(username, password)
