@@ -9,7 +9,7 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 # --- CONFIGURATION ---
 DB_NAME = "netwiser.db"
 PORT = 8765 # Local communication port
-LOGIN_PAGE = "login_students.html"
+LOGIN_PAGE = "index.html"
 
 def hash_password(password):
     """Secure SHA-256 Hashing."""
