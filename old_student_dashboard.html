@@ -31,7 +31,104 @@ color:var(--text-main);
 font-family:Arial,sans-serif;
 min-height:100vh;
 }
+/* ADD THIS TO CSS */
 
+.classcode-overlay{
+position:fixed;
+inset:0;
+background:rgba(2,2,4,0.96);
+backdrop-filter:blur(10px);
+display:flex;
+align-items:center;
+justify-content:center;
+z-index:9999;
+transition:opacity 0.4s ease,visibility 0.4s ease;
+}
+
+.classcode-overlay.hidden{
+opacity:0;
+visibility:hidden;
+}
+
+.classcode-box{
+width:420px;
+background:var(--card);
+border:1px solid var(--border);
+border-radius:24px;
+padding:40px;
+box-shadow:var(--shadow);
+display:flex;
+flex-direction:column;
+gap:18px;
+animation:fadeUp 0.5s ease;
+}
+
+.classcode-box h2{
+font-size:1.8rem;
+color:var(--lightblue);
+}
+
+.classcode-box p{
+color:var(--text-muted);
+line-height:1.5;
+font-size:0.95rem;
+}
+
+.classcode-box input{
+width:100%;
+height:55px;
+padding:0 18px;
+border-radius:14px;
+border:1px solid var(--border);
+background:rgba(255,255,255,0.04);
+color:white;
+font-size:1rem;
+outline:none;
+transition:0.2s ease;
+}
+
+.classcode-box input:focus{
+border-color:rgba(0,242,255,0.4);
+box-shadow:0 0 15px rgba(0,242,255,0.12);
+}
+
+.classcode-box button{
+height:55px;
+border:none;
+border-radius:14px;
+background:linear-gradient(90deg,var(--darkblue),var(--lightblue));
+color:white;
+font-size:1rem;
+font-weight:bold;
+cursor:pointer;
+transition:0.2s ease;
+}
+
+.classcode-box button:hover{
+transform:translateY(-2px);
+box-shadow:0 0 20px rgba(0,242,255,0.2);
+}
+
+.classcode-error{
+display:none;
+color:#ff5c5c;
+font-size:0.9rem;
+}
+
+.classcode-error.active{
+display:block;
+}
+
+@keyframes fadeUp{
+from{
+opacity:0;
+transform:translateY(20px);
+}
+to{
+opacity:1;
+transform:translateY(0);
+}
+}
 /* NAVBAR */
 
 .navbar{
@@ -142,10 +239,10 @@ top:-2px;
 right:-2px;
 width:18px;
 height:18px;
-border-radius:50%;
+border-radius:70%;
 background:#ff3b3b;
 color:white;
-font-size:0.7rem;
+font-size:0.5rem;
 font-weight:bold;
 display:flex;
 align-items:center;
@@ -444,6 +541,15 @@ padding:20px;
 </style>
 </head>
 <body>
+<div class="classcode-overlay" id="classcodeOverlay">
+<div class="classcode-box">
+<h2>Enter Class Code</h2>
+<p>Please enter your classroom access code to continue.</p>
+<input type="password" id="classCodeInput" placeholder="Class Code">
+<button id="classCodeBtn">Continue</button>
+<div class="classcode-error" id="classCodeError">Incorrect class code</div>
+</div>
+</div>
 
 <nav class="navbar">
 <div class="nav-left">
@@ -471,7 +577,7 @@ padding:20px;
 <svg fill="none" viewBox="0 0 24 24" stroke-width="2">
 <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 0 1-5.714 0M18 8.25a6 6 0 1 0-12 0c0 7.372-3 8.25-3 8.25h18s-3-.878-3-8.25Zm-4.243 11.243a3 3 0 0 1-5.514 0"/>
 </svg>
-<div class="notification-badge">0</div>
+<div class="notification-badge">3</div>
 </button>
 </div>
 
@@ -595,6 +701,30 @@ Locked Until Previous Module Is Completed
 </main>
 
 <script>
+const classCodeBtn=document.getElementById("classCodeBtn");
+const classCodeInput=document.getElementById("classCodeInput");
+const classcodeOverlay=document.getElementById("classcodeOverlay");
+const classCodeError=document.getElementById("classCodeError");
+/* CHANGE THIS */
+const correctCode="EBHSENC";
+function checkClassCode(){
+if(classCodeInput.value===correctCode){
+classcodeOverlay.classList.add("hidden");
+}
+else{
+classCodeError.classList.add("active");
+classCodeInput.style.borderColor="#ff5c5c";
+setTimeout(()=>{
+classCodeInput.style.borderColor="var(--border)";
+},700);}}
+classCodeBtn.addEventListener("click",checkClassCode);
+classCodeInput.addEventListener("keypress",(e)=>{
+if(e.key==="Enter"){
+checkClassCode();
+}
+
+});
+  
 const profileBtn=document.getElementById("profileBtn");
 const profileDropdown=document.getElementById("profileDropdown");
 
