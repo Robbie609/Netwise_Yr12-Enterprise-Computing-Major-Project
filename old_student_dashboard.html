@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Netwiser Dashboard</title>
+
+<style>
+:root{
+--bg:#020204;
+--card:#0b0f14;
+--card-light:#10161f;
+--lightblue:#00f2ff;
+--darkblue:#0066ff;
+--cyan:#00ffbf;
+--text-main:#ffffff;
+--text-muted:#8a8a9e;
+--border:rgba(255,255,255,0.08);
+--shadow:0 0 30px rgba(0,242,255,0.08),0 0 80px rgba(0,102,255,0.04);
+}
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+body{
+background:var(--bg);
+color:var(--text-main);
+font-family:Arial,sans-serif;
+min-height:100vh;
+}
+
+/* NAVBAR */
+
+.navbar{
+width:100%;
+height:85px;
+padding:0 40px;
+display:flex;
+align-items:center;
+justify-content:space-between;
+background:rgba(5,7,12,0.92);
+backdrop-filter:blur(10px);
+border-bottom:1px solid var(--border);
+position:sticky;
+top:0;
+z-index:100;
+}
+
+.nav-left{
+display:flex;
+align-items:center;
+gap:50px;
+}
+
+.logo{
+font-size:1.5rem;
+font-weight:bold;
+color:var(--lightblue);
+letter-spacing:1px;
+}
+
+/* NAV LINKS */
+
+.nav-links{
+display:flex;
+align-items:center;
+gap:35px;
+}
+
+.nav-item{
+display:flex;
+flex-direction:column;
+align-items:center;
+justify-content:center;
+gap:6px;
+text-decoration:none;
+color:var(--text-muted);
+transition:0.2s ease;
+min-width:80px;
+}
+
+.nav-item:hover{
+color:var(--lightblue);
+transform:translateY(-2px);
+}
+
+.nav-icon{
+width:22px;
+height:22px;
+stroke:currentColor;
+}
+
+.nav-item span{
+font-size:0.85rem;
+}
+
+/* RIGHT SIDE */
+
+.nav-right{
+display:flex;
+align-items:center;
+gap:16px;
+}
+
+/* NOTIFICATIONS */
+
+.notification-wrapper{
+position:relative;
+}
+
+.notification-btn{
+width:50px;
+height:50px;
+border-radius:50%;
+border:1px solid var(--border);
+background:rgba(255,255,255,0.04);
+display:flex;
+align-items:center;
+justify-content:center;
+cursor:pointer;
+position:relative;
+transition:0.2s ease;
+}
+
+.notification-btn:hover{
+border-color:rgba(0,242,255,0.3);
+box-shadow:0 0 15px rgba(0,242,255,0.15);
+}
+
+.notification-btn svg{
+width:22px;
+height:22px;
+stroke:white;
+}
+
+.notification-badge{
+position:absolute;
+top:-2px;
+right:-2px;
+width:18px;
+height:18px;
+border-radius:50%;
+background:#ff3b3b;
+color:white;
+font-size:0.7rem;
+font-weight:bold;
+display:flex;
+align-items:center;
+justify-content:center;
+border:2px solid var(--bg);
+}
+
+/* PROFILE */
+
+.profile-wrapper{
+position:relative;
+}
+
+.profile-btn{
+width:50px;
+height:50px;
+border-radius:50%;
+border:1px solid var(--border);
+background:rgba(255,255,255,0.04);
+display:flex;
+align-items:center;
+justify-content:center;
+cursor:pointer;
+transition:0.2s ease;
+}
+
+.profile-btn:hover{
+border-color:rgba(0,242,255,0.3);
+box-shadow:0 0 15px rgba(0,242,255,0.15);
+}
+
+.profile-btn svg{
+width:22px;
+height:22px;
+stroke:white;
+}
+
+/* PROFILE DROPDOWN */
+
+.profile-dropdown{
+position:absolute;
+top:65px;
+right:0;
+width:270px;
+background:var(--card);
+border:1px solid var(--border);
+border-radius:20px;
+padding:15px;
+display:none;
+flex-direction:column;
+gap:8px;
+box-shadow:var(--shadow);
+z-index:500;
+}
+
+.profile-dropdown.active{
+display:flex;
+}
+
+.profile-header{
+display:flex;
+align-items:center;
+gap:15px;
+padding-bottom:10px;
+}
+
+.profile-avatar{
+width:55px;
+height:55px;
+border-radius:50%;
+background:rgba(255,255,255,0.05);
+display:flex;
+align-items:center;
+justify-content:center;
+}
+
+.profile-avatar svg{
+width:24px;
+height:24px;
+stroke:white;
+}
+
+.profile-name{
+font-weight:bold;
+color:white;
+}
+
+.profile-email{
+font-size:0.85rem;
+color:var(--text-muted);
+margin-top:3px;
+}
+
+.dropdown-divider{
+height:1px;
+background:var(--border);
+margin:5px 0;
+}
+
+.dropdown-item{
+padding:12px 14px;
+border-radius:12px;
+text-decoration:none;
+color:var(--text-muted);
+transition:0.2s ease;
+}
+
+.dropdown-item:hover{
+background:rgba(255,255,255,0.04);
+color:var(--lightblue);
+}
+
+.logout-item:hover{
+color:#ff5c5c;
+}
+
+/* MAIN CONTENT */
+
+.container{
+width:100%;
+max-width:1400px;
+margin:auto;
+padding:30px;
+}
+
+.content{
+display:flex;
+flex-direction:column;
+gap:25px;
+}
+
+/* CARD */
+
+.card{
+background:var(--card);
+border:1px solid var(--border);
+border-radius:22px;
+padding:25px;
+box-shadow:var(--shadow);
+}
+
+.section-title{
+font-size:0.9rem;
+color:var(--lightblue);
+text-transform:uppercase;
+letter-spacing:1px;
+margin-bottom:20px;
+}
+
+/* STATS */
+
+.stats-row{
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:20px;
+}
+
+.stat-card{
+background:linear-gradient(145deg,rgba(0,242,255,0.05),rgba(0,102,255,0.03));
+border:1px solid var(--border);
+border-radius:18px;
+padding:25px;
+min-height:130px;
+transition:0.2s ease;
+}
+
+.stat-card:hover{
+transform:translateY(-4px);
+border-color:rgba(0,242,255,0.2);
+}
+
+.stat-title{
+color:var(--text-muted);
+margin-bottom:12px;
+font-size:0.9rem;
+}
+
+.stat-number{
+font-size:2rem;
+font-weight:bold;
+color:var(--lightblue);
+}
+
+/* WELCOME */
+
+.welcome-box{
+background:linear-gradient(135deg,rgba(0,242,255,0.06),rgba(0,102,255,0.04));
+border:1px solid var(--border);
+border-radius:18px;
+padding:30px;
+}
+
+.welcome-box h2{
+font-size:1.8rem;
+margin-bottom:10px;
+}
+
+.welcome-box p{
+color:var(--text-muted);
+line-height:1.6;
+}
+
+/* ROADMAP */
+
+.roadmap{
+display:flex;
+flex-direction:column;
+gap:18px;
+}
+
+.roadmap-module{
+background:var(--card-light);
+border:1px solid var(--border);
+border-radius:16px;
+padding:20px;
+transition:0.2s ease;
+}
+
+.roadmap-module:hover{
+border-color:rgba(0,242,255,0.2);
+}
+
+.module-top{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:14px;
+}
+
+.module-title{
+font-weight:bold;
+font-size:1rem;
+}
+
+.module-status{
+font-size:0.8rem;
+padding:6px 10px;
+border-radius:999px;
+background:rgba(0,255,191,0.08);
+color:var(--cyan);
+}
+
+.progress-bar{
+width:100%;
+height:10px;
+background:rgba(255,255,255,0.05);
+border-radius:999px;
+overflow:hidden;
+}
+
+.progress-fill{
+height:100%;
+background:linear-gradient(90deg,var(--darkblue),var(--lightblue));
+border-radius:999px;
+}
+
+.module-progress{
+margin-top:10px;
+font-size:0.85rem;
+color:var(--text-muted);
+}
+
+/* RESPONSIVE */
+
+@media (max-width:1000px){
+.stats-row{
+grid-template-columns:repeat(2,1fr);
+}
+}
+
+@media (max-width:700px){
+.navbar{
+flex-direction:column;
+height:auto;
+padding:20px;
+gap:20px;
+}
+
+.nav-left{
+flex-direction:column;
+gap:20px;
+}
+
+.nav-links{
+gap:20px;
+}
+
+.stats-row{
+grid-template-columns:1fr;
+}
+
+.container{
+padding:20px;
+}
+}
+</style>
+</head>
+<body>
+
+<nav class="navbar">
+<div class="nav-left">
+<div class="logo">NETWISER</div>
+<div class="nav-links">
+<a href="#" class="nav-item">
+<svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke-width="2">
+<path stroke-linecap="round" stroke-linejoin="round" d="M3 9.75L12 4l9 5.75v9.25a1 1 0 0 1-1 1h-5.5v-6h-5v6H4a1 1 0 0 1-1-1V9.75z"/>
+</svg>
+<span>Dashboard</span>
+</a>
+
+<a href="#" class="nav-item">
+<svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke-width="2">
+<path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 8.79 5 6.5 5A4.5 4.5 0 0 0 2 9.5V18a1 1 0 0 0 1.447.894C4.91 18.188 6.36 18 8 18c2.11 0 3.916.314 4 .5.084-.186 1.89-.5 4-.5 1.64 0 3.09.188 4.553.894A1 1 0 0 0 22 18V9.5A4.5 4.5 0 0 0 17.5 5c-2.29 0-4.332.477-5.5 1.253z"/>
+</svg>
+<span>Courses</span>
+</a>
+</div>
+</div>
+
+<div class="nav-right">
+<div class="notification-wrapper">
+<button class="notification-btn">
+<svg fill="none" viewBox="0 0 24 24" stroke-width="2">
+<path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 0 1-5.714 0M18 8.25a6 6 0 1 0-12 0c0 7.372-3 8.25-3 8.25h18s-3-.878-3-8.25Zm-4.243 11.243a3 3 0 0 1-5.514 0"/>
+</svg>
+<div class="notification-badge">0</div>
+</button>
+</div>
+
+<div class="profile-wrapper">
+<button class="profile-btn" id="profileBtn">
+<svg fill="none" viewBox="0 0 24 24" stroke-width="2">
+<path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6.75a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.5 20.25a7.5 7.5 0 0 1 15 0"/>
+</svg>
+</button>
+
+<div class="profile-dropdown" id="profileDropdown">
+<div class="profile-header">
+<div class="profile-avatar">
+<svg fill="none" viewBox="0 0 24 24" stroke-width="2">
+<path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6.75a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.5 20.25a7.5 7.5 0 0 1 15 0"/>
+</svg>
+</div>
+
+<div>
+<div class="profile-name">Student Name</div>
+<div class="profile-email">student@netwiser.com</div>
+</div>
+</div>
+
+<div class="dropdown-divider"></div>
+<a href="#" class="dropdown-item">My Profile</a>
+<a href="#" class="dropdown-item">Settings</a>
+<a href="#" class="dropdown-item">Notifications</a>
+<a href="#" class="dropdown-item">Help & Support</a>
+<div class="dropdown-divider"></div>
+<a href="login_students.html" class="dropdown-item logout-item">Logout</a>
+</div>
+</div>
+</div>
+</nav>
+
+<main class="container">
+<div class="content">
+<section class="card">
+<div class="section-title">Quick Stats</div>
+<div class="stats-row">
+<div class="stat-card">
+<div class="stat-title">Completed Tasks</div>
+<div class="stat-number">12</div>
+</div>
+
+<div class="stat-card">
+<div class="stat-title">Courses</div>
+<div class="stat-number">4</div>
+</div>
+
+<div class="stat-card">
+<div class="stat-title">Progress</div>
+<div class="stat-number">78%</div>
+</div>
+
+<div class="stat-card">
+<div class="stat-title">Notifications</div>
+<div class="stat-number">3</div>
+</div>
+</div>
+</section>
+
+<section class="card">
+<div class="section-title">Welcome</div>
+<div class="welcome-box">
+<h2>Welcome back, Student</h2>
+<p>
+Continue progressing through your learning roadmap,
+complete modules, and track your achievements through Netwiser.
+</p>
+</div>
+</section>
+
+<section class="card">
+<div class="section-title">Module Roadmap</div>
+<div class="roadmap">
+<div class="roadmap-module">
+<div class="module-top">
+<div class="module-title">Module 1 — Cybersecurity Basics</div>
+<div class="module-status">In Progress</div>
+</div>
+
+<div class="progress-bar">
+<div class="progress-fill" style="width:75%;"></div>
+</div>
+
+<div class="module-progress">75% Complete</div>
+</div>
+
+<div class="roadmap-module">
+<div class="module-top">
+<div class="module-title">Module 2 — Phishing</div>
+<div class="module-status">In Progress</div>
+</div>
+
+<div class="progress-bar">
+<div class="progress-fill" style="width:40%;"></div>
+</div>
+
+<div class="module-progress">40% Complete</div>
+</div>
+
+<div class="roadmap-module">
+<div class="module-top">
+<div class="module-title">Module 3 — Social Engineering</div>
+<div class="module-status">Locked</div>
+</div>
+
+<div class="progress-bar">
+<div class="progress-fill" style="width:0%;"></div>
+</div>
+
+<div class="module-progress">
+Locked Until Previous Module Is Completed
+</div>
+</div>
+</div>
+</section>
+</div>
+</main>
+
+<script>
+const profileBtn=document.getElementById("profileBtn");
+const profileDropdown=document.getElementById("profileDropdown");
+
+profileBtn.addEventListener("click",()=>{
+profileDropdown.classList.toggle("active");
+});
+
+window.addEventListener("click",(e)=>{
+if(!profileBtn.contains(e.target)&&!profileDropdown.contains(e.target)){
+profileDropdown.classList.remove("active");
+}
+});
+</script>
+
+</body>
+</html>
