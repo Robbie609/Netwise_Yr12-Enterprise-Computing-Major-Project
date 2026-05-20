@@ -8,7 +8,7 @@ status: "Completed",
 progress: 100,
 color: "#00ffbf",
 stateClass: "completed",
-icon: `<svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>`
+icon: `<img src="https://www.svgrepo.com/show/522010/lock.svg" alt="Password Icon" style="width: 100%; height: 100%; filter: brightness(0) saturate(100%) invert(1) sepia(100%) saturate(10000%) hue-rotate(120deg);">`
     },
     {
 id: "browse",
