@@ -1,2 +1,1 @@
-# Netwiser_Yr12-Enterprise-Computing-Major-Project
-Netwiser is a cybersecurity training system for Year 6 - 8 students to help them learn how to stay safe online.
+Netwiser is an interactive cybersecurity learning platform designed for Year 6 – 8 students. It transforms cyber safety education into an engaging game like experience with guided missions

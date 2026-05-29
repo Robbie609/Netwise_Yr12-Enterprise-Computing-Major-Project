@@ -12,7 +12,6 @@ PORT = 8765 # Local communication port
 LOGIN_PAGE = "index.html"
 
 def hash_password(password):
-    """Secure SHA-256 Hashing."""
     return hashlib.sha256(password.encode()).hexdigest()
 
 def validate_login(username_email, provided_password):
