@@ -8,656 +8,15 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-    
-    <style>
-        /* ==========================================================================
-           DESIGN TOKENS & CSS VARIABLES
-           ========================================================================== */
-        :root {
-            /* Color System */
-            --bg-base: #060B11; /* Ultra-dark navy */
-            
-            --cyan: #00f2ff;
-            --cyan-glow: rgba(0, 242, 255, 0.3);
-            --cyan-dim: rgba(0, 242, 255, 0.12);
-            
-            --amber: #f5a623;
-            --amber-glow: rgba(245, 166, 35, 0.2);
-            
-            --text-primary: #ffffff;
-            --text-secondary: #9ba1b0;
-            --text-muted: #64748b;
-            
-            /* Spacing (4rem min section spacing) */
-            --space-section: 4rem;
-        }
-
-        /* ==========================================================================
-           RESET & GLOBAL
-           ========================================================================== */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            background-color: var(--bg-base);
-            color: var(--text-primary);
-            font-family: 'Inter', sans-serif;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-            overflow-x: hidden;
-            line-height: 1.5;
-            background-image: 
-                radial-gradient(circle at 50% 0%, rgba(0, 242, 255, 0.03) 0%, transparent 60%),
-                radial-gradient(circle at 50% 100%, rgba(0, 242, 255, 0.02) 0%, transparent 60%);
-            background-attachment: fixed;
-        }
-
-        /* ==========================================================================
-           EXACT NAVBAR CSS ARCHITECTURE
-           ========================================================================== */
-        .navbar {
-            width: 100%;
-            height: 80px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 4rem;
-            position: sticky;
-            top: 0;
-            z-index: 50;
-            background: rgba(15, 20, 30, 0.6);
-            backdrop-filter: blur(24px);
-            -webkit-backdrop-filter: blur(24px);
-            border-bottom: 1px solid rgba(255,255,255,0.08);
-            box-shadow: 0 4px 30px rgba(0,0,0,0.5);
-        }
-
-        .nav-left {
-            display: flex;
-            align-items: center;
-        }
-
-        .nav-logo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-weight: 600;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            color: var(--text-primary);
-            margin-right: 1rem;
-        }
-        
-        .nav-logo svg {
-            width: 28px;
-            height: 28px;
-            fill: var(--cyan);
-            filter: drop-shadow(0 0 8px var(--cyan-glow));
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 3rem;
-            margin-left: 2rem;
-        }
-
-        .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 0.3rem;
-            color: #9ba1b0;
-            text-decoration: none;
-            transition: all 0.3s cubic-bezier(0.16,1,0.3,1);
-            font-size: 0.85rem;
-            font-weight: 500;
-        }
-
-        .nav-icon {
-            width: 24px;
-            height: 24px;
-            stroke: #9ba1b0;
-            transition: all 0.3s cubic-bezier(0.16,1,0.3,1);
-        }
-
-        .nav-item:hover {
-            color: rgba(255,255,255,0.8);
-        }
-        .nav-item:hover .nav-icon {
-            stroke: rgba(255,255,255,0.8);
-        }
-
-        .nav-item.active {
-            color: white;
-        }
-
-        .nav-item.active .nav-icon {
-            stroke: #00f2ff;
-            filter: drop-shadow(0 0 5px #00f2ff);
-        }
-
-        .nav-right {
-            display: flex;
-            align-items: center;
-            gap: 1.5rem;
-        }
-
-        /* Notification Styling */
-        .notification-wrapper { position: relative; }
-        .notification-btn {
-            background: transparent;
-            border: none;
-            cursor: pointer;
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .notification-btn svg { width: 24px; height: 24px; stroke: #9ba1b0; transition: stroke 0.3s; }
-        .notification-btn:hover svg { stroke: white; }
-        .notification-badge {
-            position: absolute;
-            top: -4px;
-            right: -4px;
-            background: var(--cyan);
-            color: #000;
-            font-size: 10px;
-            font-weight: 700;
-            width: 16px;
-            height: 16px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        /* Profile Dropdown Styling */
-        .profile-wrapper { position: relative; }
-        .profile-btn {
-            background: transparent;
-            border: none;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .profile-btn svg { width: 28px; height: 28px; stroke: #9ba1b0; transition: stroke 0.3s; }
-        .profile-btn:hover svg { stroke: white; }
-        
-        .profile-dropdown {
-            position: absolute;
-            top: 120%;
-            right: 0;
-            width: 240px;
-            background: rgba(14,22,32,0.95);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 16px;
-            padding: 1rem;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.6);
-            opacity: 0;
-            visibility: hidden;
-            transform: translateY(-10px);
-            transition: all 0.3s cubic-bezier(0.16,1,0.3,1);
-        }
-        
-        .profile-dropdown.show {
-            opacity: 1;
-            visibility: visible;
-            transform: translateY(0);
-        }
-
-        .profile-header { display: flex; align-items: center; gap: 12px; margin-bottom: 0.5rem; }
-        .profile-avatar svg { width: 36px; height: 36px; stroke: var(--cyan); }
-        .profile-name { font-weight: 600; font-size: 0.9rem; }
-        .profile-email { font-size: 0.75rem; color: var(--text-secondary); }
-        .dropdown-divider { height: 1px; background: rgba(255,255,255,0.08); margin: 0.75rem 0; }
-        .dropdown-item {
-            display: block;
-            text-decoration: none;
-            color: var(--text-secondary);
-            font-size: 0.85rem;
-            padding: 0.5rem;
-            border-radius: 8px;
-            transition: all 0.2s;
-        }
-        .dropdown-item:hover { background: rgba(255,255,255,0.05); color: white; }
-        .logout-item:hover { background: rgba(255,71,87,0.1); color: #ff4757; }
-
-        /* ==========================================================================
-           PAGE LAYOUT (CENTERED COMPOSITION)
-           ========================================================================== */
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 4rem 2rem;
-            display: flex;
-            flex-direction: column;
-            gap: var(--space-section);
-        }
-
-        .section-header {
-            margin-bottom: 2rem;
-            display: flex;
-            align-items: baseline;
-            gap: 1rem;
-        }
-        .section-title {
-            font-size: 1.25rem;
-            font-weight: 400;
-            letter-spacing: 0.05em;
-            color: var(--text-primary);
-        }
-        .section-subtitle {
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-            font-family: 'JetBrains Mono', monospace;
-        }
-
-        /* ==========================================================================
-           HERO CARD (Exact Spec)
-           ========================================================================== */
-        .hero-card {
-            border-radius: 24px;
-            display: grid;
-            grid-template-columns: 1.2fr 1fr;
-            gap: 3rem;
-            padding: 3.5rem;
-            background: linear-gradient(145deg, rgba(19,31,39,0.8), rgba(11,17,23,0.9));
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255,255,255,0.08);
-            box-shadow: 0 30px 60px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.1);
-            overflow: hidden;
-            position: relative;
-        }
-
-        .hero-content {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-
-        .hero-title {
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            color: var(--cyan);
-            margin-bottom: 0.5rem;
-        }
-
-        .hero-main-stat {
-            font-size: 3.5rem;
-            font-weight: 300;
-            line-height: 1.1;
-            margin-bottom: 2rem;
-        }
-
-        .hero-metrics-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2rem;
-        }
-
-        .metric-block {
-            display: flex;
-            flex-direction: column;
-            gap: 0.25rem;
-        }
-
-        .metric-label {
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-
-        .metric-value {
-            font-size: 1.5rem;
-            font-family: 'JetBrains Mono', monospace;
-            color: var(--text-primary);
-        }
-
-        /* Threat Radar Box Wrapper */
-        .radar-wrapper {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-        }
-
-        /* ==========================================================================
-           NEURAL NETWORK SECTION (Exact Spec)
-           ========================================================================== */
-        .neural-wrapper {
-            background: linear-gradient(145deg, rgba(14,22,32,0.88), rgba(8,13,20,0.94));
-            border-radius: 28px;
-            border: 1px solid rgba(255,255,255,0.08);
-            backdrop-filter: blur(20px);
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-            max-height: 340px;
-            height: 340px;
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .neural-overlay {
-            position: absolute;
-            top: 2rem;
-            left: 2rem;
-            pointer-events: none;
-            z-index: 10;
-        }
-
-        #neuralCanvas {
-            width: 100%;
-            height: 100%;
-            display: block;
-        }
-
-        /* ==========================================================================
-           RITHWICK PROGRESSION (Roadmap match)
-           ========================================================================== */
-        .progression-card {
-            background: linear-gradient(145deg, rgba(14,22,32,0.88), rgba(8,13,20,0.94));
-            border-radius: 24px;
-            border: 1px solid rgba(255,255,255,0.08);
-            backdrop-filter: blur(20px);
-            padding: 3rem;
-        }
-
-        .progression-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 3rem;
-        }
-
-        .progression-target {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .risk-badge {
-            font-size: 0.75rem;
-            font-family: 'JetBrains Mono', monospace;
-            color: var(--amber);
-            background: rgba(245, 166, 35, 0.1);
-            border: 1px solid rgba(245, 166, 35, 0.2);
-            padding: 4px 12px;
-            border-radius: 99px;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-
-        .roadmap-track {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: relative;
-        }
-
-        .roadmap-line {
-            position: absolute;
-            top: 24px;
-            left: 5%;
-            right: 5%;
-            height: 2px;
-            background: rgba(255,255,255,0.05);
-            z-index: 1;
-        }
-
-        .roadmap-node {
-            position: relative;
-            z-index: 2;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 1rem;
-            width: 120px;
-            text-align: center;
-        }
-
-        .orb {
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            background: rgba(15,22,35,1);
-            border: 2px solid rgba(255,255,255,0.1);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.4s ease;
-        }
-
-        .orb svg {
-            width: 20px;
-            height: 20px;
-            stroke: var(--text-secondary);
-            fill: none;
-        }
-
-        .node-completed .orb {
-            border-color: #10B981;
-            box-shadow: 0 0 20px rgba(16, 185, 129, 0.2);
-        }
-        .node-completed .orb svg { stroke: #10B981; }
-
-        .node-active .orb {
-            border-color: var(--cyan);
-            box-shadow: 0 0 24px var(--cyan-glow);
-            animation: orb-pulse 2s cubic-bezier(0.16,1,0.3,1) infinite;
-        }
-        .node-active .orb svg { stroke: var(--cyan); }
-
-        .node-locked .orb {
-            opacity: 0.4;
-        }
-
-        .node-label {
-            font-size: 0.85rem;
-            font-weight: 500;
-            color: var(--text-primary);
-        }
-        .node-status {
-            font-size: 0.7rem;
-            color: var(--text-secondary);
-            font-family: 'JetBrains Mono', monospace;
-        }
-
-        @keyframes orb-pulse {
-            0% { box-shadow: 0 0 0 0 rgba(0, 242, 255, 0.4); }
-            70% { box-shadow: 0 0 0 15px rgba(0, 242, 255, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(0, 242, 255, 0); }
-        }
-
-        /* ==========================================================================
-           MODULE CARDS (Exact Spec)
-           ========================================================================== */
-        .modules-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-            gap: 1.5rem;
-        }
-
-        .module-card {
-            background: rgba(15,22,35,0.45);
-            border: 1px solid rgba(255,255,255,0.06);
-            border-radius: 20px;
-            padding: 1.4rem;
-            transition: all 0.25s cubic-bezier(0.16,1,0.3,1);
-            cursor: pointer;
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-
-        .module-card:hover {
-            transform: translateY(-6px);
-            border-color: rgba(0,242,255,0.3);
-            box-shadow: 0 15px 40px rgba(0,242,255,0.08);
-        }
-
-        .module-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 12px;
-            background: rgba(255,255,255,0.03);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .module-icon svg { width: 22px; height: 22px; stroke: currentColor; fill: none; }
-        .module-icon img { display: block; max-width: 100%; max-height: 100%; }
-
-        .module-title { font-size: 1rem; font-weight: 500; }
-        .module-desc { font-size: 0.8rem; color: var(--text-secondary); line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-        .module-meta { font-size: 0.75rem; color: var(--text-muted); display: flex; justify-content: space-between;}
-
-        /* ==========================================================================
-           STUDENT PERFORMANCE CARDS (Floating cards instead of tables)
-           ========================================================================== */
-        .student-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 1.5rem;
-        }
-
-        .student-card {
-            background: rgba(15,22,35,0.3);
-            border: 1px solid rgba(255,255,255,0.05);
-            border-radius: 16px;
-            padding: 1.25rem;
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-            transition: all 0.25s cubic-bezier(0.16,1,0.3,1);
-        }
-
-        .student-card:hover {
-            background: rgba(15,22,35,0.5);
-            border-color: rgba(255,255,255,0.1);
-        }
-
-        .student-card.top-performer {
-            border-color: rgba(0,242,255,0.15);
-            background: linear-gradient(180deg, rgba(0,242,255,0.03) 0%, transparent 100%);
-        }
-
-        .student-card.at-risk {
-            border-color: rgba(245,166,35,0.15);
-        }
-
-        .sc-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .sc-identity {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .sc-avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background: rgba(255,255,255,0.05);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.75rem;
-            font-weight: 600;
-            color: var(--text-secondary);
-        }
-
-        .top-performer .sc-avatar {
-            background: rgba(0,242,255,0.1);
-            color: var(--cyan);
-            box-shadow: 0 0 10px rgba(0,242,255,0.2);
-        }
-
-        .sc-name {
-            font-size: 0.9rem;
-            font-weight: 500;
-        }
-
-        .sc-metric {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.85rem;
-        }
-        
-        .top-performer .sc-metric { color: var(--cyan); }
-        .at-risk .sc-metric { color: var(--amber); }
-
-        .sc-progress-track {
-            height: 4px;
-            background: rgba(255,255,255,0.05);
-            border-radius: 2px;
-            overflow: hidden;
-        }
-        
-        .sc-progress-fill {
-            height: 100%;
-            background: var(--text-secondary);
-            border-radius: 2px;
-        }
-        .top-performer .sc-progress-fill { background: var(--cyan); }
-        .at-risk .sc-progress-fill { background: var(--amber); }
-
-        /* ==========================================================================
-           AI INSIGHTS PANEL
-           ========================================================================== */
-        .ai-insights {
-            background: linear-gradient(145deg, rgba(14,22,32,0.6), rgba(8,13,20,0.8));
-            border-radius: 24px;
-            border: 1px solid rgba(255,255,255,0.08);
-            padding: 3rem;
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-        }
-
-        .insight-row {
-            display: flex;
-            gap: 1rem;
-            padding-bottom: 1.5rem;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-        }
-        .insight-row:last-child {
-            border-bottom: none;
-            padding-bottom: 0;
-        }
-
-        .insight-icon {
-            width: 24px;
-            height: 24px;
-            flex-shrink: 0;
-            margin-top: 2px;
-        }
-        .insight-icon svg { width: 100%; height: 100%; fill: none; }
-        
-        .insight-text { font-size: 0.95rem; line-height: 1.5; color: rgba(255,255,255,0.9); }
-        .insight-subtext { font-size: 0.75rem; color: var(--text-muted); margin-top: 4px; font-family: 'JetBrains Mono', monospace; }
-
-        .text-cyan { color: var(--cyan); }
-        .text-amber { color: var(--amber); }
-    </style>
+    <link href="teacher_dashboard.css" rel="stylesheet">
 </head>
 <body>
 
     <nav class="navbar">
         <div class="nav-left">
             <div class="nav-logo">
-                <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" stroke-width="2" stroke-linejoin="round" fill="none"/></svg>
-                NETWISER
+                <img src="Logo2.png" style="width: 45px; height: 45px;" alt="Netwiser Icon"></div>
+                <img src="Logo1.png" style="width: 130px; height: 20px;" alt="Netwiser Icon"></div>
             </div>
             <div class="nav-links">
                 <a href="#" class="nav-item active">
@@ -699,19 +58,16 @@
                 </button>
                 <div class="profile-dropdown" id="profileDropdown">
                     <div class="profile-header">
-                        <div class="profile-avatar">
-                            <svg fill="none" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6.75a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.5 20.25a7.5 7.5 0 0 1 15 0"/></svg>
-                        </div>
                         <div>
-                            <div class="profile-name">Instructor Vance</div>
-                            <div class="profile-email">vance@netwiser.edu</div>
+                            <div class="profile-name">Blake White</div>
+                            <div class="profile-email">blake.white@netwiser.edu</div>
                         </div>
                     </div>
                     <div class="dropdown-divider"></div>
                     <a href="#" class="dropdown-item">My Profile</a>
                     <a href="#" class="dropdown-item">Settings</a>
                     <div class="dropdown-divider"></div>
-                    <a href="#" class="dropdown-item logout-item">Logout</a>
+                    <a href="login_students.html" class="dropdown-item logout-item">Logout</a>
                 </div>
             </div>
         </div>
@@ -722,7 +78,7 @@
         <section class="hero-card">
             <div class="hero-content">
                 <div class="hero-title">Teacher Command Center</div>
-                <h1 class="hero-main-stat">91.4% <span style="font-size: 1.5rem; color: var(--text-secondary); font-weight: 400;">Class Readiness</span></h1>
+                <h1 class="hero-main-stat">91.4% <span style="font-size: 1.5rem; color: var(--text-secondary); font-weight: 400;">Class Activity</span></h1>
                 
                 <div class="hero-metrics-grid">
                     <div class="metric-block">
@@ -750,21 +106,7 @@
 
         <section>
             <div class="section-header">
-                <h2 class="section-title">Classroom Neural Flow</h2>
-                <span class="section-subtitle">Real-time intelligence mapping</span>
-            </div>
-            <div class="neural-wrapper">
-                <div class="neural-overlay">
-                    <div style="font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em;">Live Connection Topology</div>
-                </div>
-                <canvas id="neuralCanvas"></canvas>
-            </div>
-        </section>
-
-        <section>
-            <div class="section-header">
                 <h2 class="section-title">Targeted Progression</h2>
-                <span class="section-subtitle">Intervention context</span>
             </div>
             <div class="progression-card">
                 <div class="progression-header">
@@ -772,7 +114,7 @@
                         <div class="sc-avatar" style="width: 48px; height: 48px; font-size: 1rem;">RB</div>
                         <div>
                             <div style="font-size: 1.1rem; font-weight: 500;">Rithwick Baye</div>
-                            <div style="font-size: 0.85rem; color: var(--text-secondary);">Currently struggling with pacing.</div>
+                            <div style="font-size: 0.85rem; color: var(--text-secondary);">Currently struggling with everything.</div>
                         </div>
                     </div>
                     <div class="risk-badge">Moderate Risk</div>
@@ -793,7 +135,7 @@
                         <div class="orb"><svg viewBox="0 0 24 24" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg></div>
                         <div>
                             <div class="node-label text-cyan">Safe Browsing</div>
-                            <div class="node-status">Active Pulse</div>
+                            <div class="node-status">Currently in Progress</div>
                         </div>
                     </div>
 
@@ -806,7 +148,7 @@
                     </div>
 
                     <div class="roadmap-node node-locked">
-                        <div class="orb"><svg viewBox="0 0 24 24" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+                        <div class="orb"><svg src="https://svgsilh.com/svg/651817.svg" style="width: 50%; height: 50%; filter: invert(1) sepia(1) grayscale(1) brightness(200%);"></svg></div>
                         <div>
                             <div class="node-label">Digital Footprint</div>
                             <div class="node-status">Locked</div>
@@ -818,8 +160,7 @@
 
         <section>
             <div class="section-header">
-                <h2 class="section-title">Active Mission Modules</h2>
-                <span class="section-subtitle">Cohort progression</span>
+                <h2 class="section-title">Class Progression</h2>
             </div>
             <div class="modules-grid" id="modulesGrid">
                 </div>
@@ -827,8 +168,7 @@
 
         <section>
             <div class="section-header">
-                <h2 class="section-title">Cohort Intelligence</h2>
-                <span class="section-subtitle">Sorted by engagement</span>
+                <h2 class="section-title">Class Ranking</h2>
             </div>
             <div class="student-grid" id="studentGrid">
                 </div>
@@ -837,7 +177,6 @@
         <section>
             <div class="section-header">
                 <h2 class="section-title">System Insights</h2>
-                <span class="section-subtitle">Automated intelligence</span>
             </div>
             <div class="ai-insights">
                 
@@ -856,7 +195,7 @@
                         <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3v11.25A2.25 2.25 0 006 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0118.75 16.5h-2.25m-7.5 0h7.5m-7.5 0l-1 3m8.5-3l1 3m0 0l.5 1.5m-.5-1.5h-9.5m0 0l-.5 1.5M9 11.25v1.5M12 9v3.75m3-6v6" /></svg>
                     </div>
                     <div>
-                        <div class="insight-text">Class-wide engagement in "Safe Browsing" is above historical baseline.</div>
+                        <div class="insight-text">Class-wide engagement in "Safe Browsing" is above baseline.</div>
                         <div class="insight-subtext">Metric up +14% compared to previous cohorts.</div>
                     </div>
                 </div>
@@ -866,7 +205,7 @@
                         <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
                     </div>
                     <div>
-                        <div class="insight-text">Rithwick Baye and Rigved Gambhir show fading module interaction.</div>
+                        <div class="insight-text">Rithwick Baye and Rigved Gambhir show barely any module interaction.</div>
                         <div class="insight-subtext">Intervention recommended on Safe Browsing fundamentals.</div>
                     </div>
                 </div>
@@ -876,373 +215,7 @@
 
     </main>
 
-    <script>
-        // Profile Dropdown Toggle
-        const profileBtn = document.getElementById('profileBtn');
-        const profileDropdown = document.getElementById('profileDropdown');
-
-        profileBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            profileDropdown.classList.toggle('show');
-        });
-
-        document.addEventListener('click', () => {
-            if (profileDropdown.classList.contains('show')) {
-                profileDropdown.classList.remove('show');
-            }
-        });
-
-        // Exact Data Models
-        const students = [
-            { name: "Rowan Robin", engage: 99, status: "top", risk: false },
-            { name: "Tarik Bansal", engage: 95, status: "high", risk: false },
-            { name: "Garv Kumar", engage: 94, status: "high", risk: false },
-            { name: "Parth Gupta", engage: 92, status: "high", risk: false },
-            { name: "Leo Shen", engage: 91, status: "high", risk: false },
-            { name: "Tony Xia", engage: 88, status: "mid", risk: false },
-            { name: "Yazan Al Hatu", engage: 85, status: "mid", risk: false },
-            { name: "Jared Yu", engage: 82, status: "mid", risk: false },
-            { name: "Siddhant Rajkarne", engage: 80, status: "mid", risk: false },
-            { name: "Neel Venkat", engage: 78, status: "mid", risk: false },
-            { name: "Jerrard Hakim", engage: 75, status: "mid", risk: false },
-            { name: "Rigved Gambhir", engage: 65, status: "low", risk: true },
-            { name: "Sai Karthik Ravi", engage: 62, status: "low", risk: true },
-            { name: "Rithwick Baye", engage: 58, status: "low", risk: true }
-        ];
-
-        const modules = [
-            {
-                id: "pass",
-                title: "Password Power",
-                desc: "Learn how to build strong, memorable password shields that trick sorting bots and brute force dictionary engines.",
-                status: "Completed",
-                progress: 100,
-                color: "#00ffbf",
-                stateClass: "completed",
-                icon: `<svg viewBox="0 0 24 24"><path d="M17 9h-1V7a4 4 0 0 0-8 0v2H7a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7a2 2 0 0 0-2-2zm-7-2a2 2 0 0 1 4 0v2h-4V7zm2 6a1.5 1.5 0 0 1 1.5 1.5c0 .6-.35 1.1-.86 1.34V17h-1.28v-1.16A1.5 1.5 0 0 1 12 13z"/></svg>`
-            },
-            {
-                id: "browse",
-                title: "Safe Browsing",
-                desc: "Identify malicious tracking cookies, secure protocols, and stay safe while surfing modern web domains.",
-                status: "In Progress",
-                progress: 25,
-                color: "#00f2ff",
-                stateClass: "current",
-                icon: `<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>`
-            },
-            {
-                id: "scam",
-                title: "Scam Spotting",
-                desc: "Train your senses to flag phishing traps, social engineering tricks, and fake validation requests instantly.",
-                status: "Locked",
-                progress: 0,
-                color: "#0055ff",
-                stateClass: "locked",
-                icon: `<svg viewBox="0 0 24 24"><ellipse cx="12" cy="12" rx="10" ry="5"></ellipse><circle cx="12" cy="12" r="4"></circle></svg>`
-            },
-            {
-                id: "foot",
-                title: "Digital Footprint",
-                desc: "Analyze your online traces and discover how data brokers assemble profiles based on casual sharing.",
-                status: "Locked",
-                progress: 0,
-                color: "#0055ff",
-                stateClass: "locked",
-                icon: `<img src="https://svgsilh.com/svg/651817.svg" alt="Footprint Icon" style="width: 50%; height: 50%; filter: invert(1) sepia(1) grayscale(1) brightness(200%);">`
-            }
-        ];
-
-        // Render Fixed Module Cards
-        const modGrid = document.getElementById('modulesGrid');
-        modules.forEach(m => {
-            modGrid.innerHTML += `
-                <div class="module-card">
-                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                        <div class="module-icon" style="color: ${m.color}">
-                            ${m.icon}
-                        </div>
-                        <span class="module-meta">${m.status}</span>
-                    </div>
-                    <div style="display: flex; flex-direction: column; gap: 0.4rem;">
-                        <div class="module-title">${m.title}</div>
-                        <div class="module-desc">${m.desc}</div>
-                        <div style="margin-top: 8px;">
-                            <div style="display: flex; justify-content: space-between; font-size: 0.75rem; margin-bottom: 4px; color: var(--text-secondary)">
-                                <span>Progress</span>
-                                <span style="font-family: 'JetBrains Mono', monospace">${m.progress}%</span>
-                            </div>
-                            <div class="sc-progress-track">
-                                <div class="sc-progress-fill" style="width: ${m.progress}%; background: ${m.color}"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-        });
-
-        // Render Student Grid
-        const stGrid = document.getElementById('studentGrid');
-        students.forEach(st => {
-            const initials = st.name.split(' ').map(n=>n).join('');
-            let cardClass = 'student-card';
-            if(st.status === 'top') cardClass += ' top-performer';
-            if(st.risk) cardClass += ' at-risk';
-
-            stGrid.innerHTML += `
-                <div class="${cardClass}">
-                    <div class="sc-header">
-                        <div class="sc-identity">
-                            <div class="sc-avatar">${initials}</div>
-                            <div class="sc-name">${st.name} ${st.status === 'top' ? '👑' : ''}</div>
-                        </div>
-                        <div class="sc-metric">${st.engage}%</div>
-                    </div>
-                    <div class="sc-progress-track">
-                        <div class="sc-progress-fill" style="width: ${st.engage}%"></div>
-                    </div>
-                </div>
-            `;
-        });
-
-        // Cyber Threat Radar Visualization Panel
-        const radarCanvas = document.getElementById('radarCanvas');
-        const rCtx = radarCanvas.getContext('2d');
-        let sweepAngle = 0;
-        
-        const blips = [
-            { r: 45, angle: 1.2, color: '#10B981', size: 4, label: "SYS_OK" }, // Green
-            { r: 75, angle: 3.8, color: '#f5a623', size: 5, label: "ATTACK_VECT" }, // Yellow
-            { r: 90, angle: 5.5, color: '#ff4757', size: 5, label: "BREACH_SUSP" }  // Red
-        ];
-
-        function drawRadar() {
-            const cx = radarCanvas.width / 2;
-            const cy = radarCanvas.height / 2;
-            const maxRadius = 100;
-
-            rCtx.clearRect(0, 0, radarCanvas.width, radarCanvas.height);
-
-            // Subtle pulsing base system integrity aura
-            const pulseFactor = Math.sin(Date.now() * 0.0025) * 4;
-            
-            // Outer Concentric Rings
-            rCtx.shadowBlur = 0;
-            for(let r = 25; r <= maxRadius; r += 25) {
-                rCtx.beginPath();
-                rCtx.arc(cx, cy, r + (r === maxRadius ? pulseFactor * 0.3 : 0), 0, Math.PI * 2);
-                rCtx.strokeStyle = `rgba(0, 242, 255, ${0.05 + (r / 500)})`;
-                rCtx.lineWidth = 1;
-                rCtx.stroke();
-            }
-
-            // Crosshairs axes
-            rCtx.beginPath();
-            rCtx.moveTo(cx - maxRadius, cy); rCtx.lineTo(cx + maxRadius, cy);
-            rCtx.moveTo(cx, cy - maxRadius); rCtx.lineTo(cx, cy + maxRadius);
-            rCtx.strokeStyle = 'rgba(255, 255, 255, 0.03)';
-            rCtx.stroke();
-
-            // Draw Threat Blips
-            blips.forEach(blip => {
-                const bx = cx + blip.r * Math.cos(blip.angle);
-                const by = cy + blip.r * Math.sin(blip.angle);
-
-                // Calculate proximity to sweep line for fade trace effect
-                let angleDiff = sweepAngle - blip.angle;
-                while (angleDiff < 0) angleDiff += Math.PI * 2;
-                angleDiff = angleDiff % (Math.PI * 2);
-
-                let alpha = 0.15;
-                if (angleDiff < 1.5) {
-                    alpha = 1.0 - (angleDiff / 1.5);
-                }
-
-                rCtx.beginPath();
-                rCtx.arc(bx, by, blip.size, 0, Math.PI * 2);
-                rCtx.fillStyle = blip.color;
-                rCtx.shadowBlur = 12;
-                rCtx.shadowColor = blip.color;
-                rCtx.globalAlpha = Math.max(alpha, 0.15);
-                rCtx.fill();
-                rCtx.globalAlpha = 1.0;
-            });
-            rCtx.shadowBlur = 0;
-
-            // Core Network Status Integrity Center Node
-            rCtx.beginPath();
-            rCtx.arc(cx, cy, 6 + pulseFactor * 0.5, 0, Math.PI * 2);
-            rCtx.fillStyle = '#00f2ff';
-            rCtx.shadowBlur = 15;
-            rCtx.shadowColor = '#00f2ff';
-            rCtx.fill();
-            rCtx.shadowBlur = 0;
-
-            // Sweep Line
-            const sx = cx + maxRadius * Math.cos(sweepAngle);
-            const sy = cy + maxRadius * Math.sin(sweepAngle);
-
-            // Draw sweep gradient trail using canvas arc
-            rCtx.beginPath();
-            rCtx.moveTo(cx, cy);
-            rCtx.arc(cx, cy, maxRadius, sweepAngle, sweepAngle - 0.4, true);
-            rCtx.closePath();
-            let gradient = rCtx.createRadialGradient(cx, cy, 10, cx, cy, maxRadius);
-            gradient.addColorStop(0, 'rgba(0, 242, 255, 0.15)');
-            gradient.addColorStop(1, 'rgba(0, 242, 255, 0.0)');
-            rCtx.fillStyle = gradient;
-            rCtx.fill();
-
-            // Main sharp sweep arm line
-            rCtx.beginPath();
-            rCtx.moveTo(cx, cy);
-            rCtx.lineTo(sx, sy);
-            rCtx.strokeStyle = 'rgba(0, 242, 255, 0.4)';
-            rCtx.lineWidth = 1.5;
-            rCtx.stroke();
-
-            // Update Sweep Angle position slowly (Ambient cinematic flow)
-            sweepAngle = (sweepAngle + 0.015) % (Math.PI * 2);
-
-            requestAnimationFrame(drawRadar);
-        }
-        drawRadar();
-
-        // Classroom Neural Network Engine Setup
-        const canvas = document.getElementById('neuralCanvas');
-        const ctx = canvas.getContext('2d');
-        let width, height;
-        let nodes = [];
-
-        function resizeCanvas() {
-            const rect = canvas.parentElement.getBoundingClientRect();
-            canvas.width = rect.width;
-            canvas.height = rect.height;
-            width = rect.width;
-            height = rect.height;
-        }
-
-        class Node {
-            constructor(student) {
-                this.x = Math.random() * width;
-                this.y = Math.random() * height;
-                this.vx = (Math.random() - 0.5) * 0.25;
-                this.vy = (Math.random() - 0.5) * 0.25;
-                this.student = student;
-                this.phase = Math.random() * Math.PI * 2;
-                
-                if(student.status === 'top') {
-                    this.baseSize = 6;
-                    this.color = '#00f2ff';
-                    this.isTop = true;
-                } else if(student.risk) {
-                    this.baseSize = 3;
-                    this.color = '#f5a623';
-                    this.isTop = false;
-                } else if(student.status === 'high') {
-                    this.baseSize = 4.5;
-                    this.color = '#00f2ff';
-                    this.isTop = false;
-                } else {
-                    this.baseSize = 3;
-                    this.color = '#64748b';
-                    this.isTop = false;
-                }
-            }
-
-            update() {
-                this.x += this.vx;
-                this.y += this.vy;
-
-                if(this.x < 0 || this.x > width) this.vx *= -1;
-                if(this.y < 0 || this.y > height) this.vy *= -1;
-                
-                this.phase += 0.025;
-            }
-
-            draw() {
-                let size = this.baseSize;
-                let shadowColor = this.color;
-                let blur = 10;
-
-                if(this.isTop) {
-                    size += Math.sin(this.phase) * 1.2;
-                    blur = 20 + Math.sin(this.phase) * 5;
-                } else if (this.student.risk) {
-                    size += Math.sin(this.phase * 2.5) * 0.4;
-                    blur = 5 + Math.sin(this.phase * 2.5) * 2;
-                }
-
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, size, 0, Math.PI * 2);
-                ctx.fillStyle = this.color;
-                
-                ctx.shadowBlur = blur;
-                ctx.shadowColor = shadowColor;
-                ctx.fill();
-                
-                ctx.shadowBlur = 0;
-
-                if(this.isTop) {
-                    ctx.fillStyle = 'rgba(255,255,255,0.8)';
-                    ctx.font = '500 11px Inter';
-                    ctx.fillText('Rowan R.', this.x + 10, this.y + 4);
-                } else if (this.student.risk && this.student.name === 'Rithwick Baye') {
-                    ctx.fillStyle = 'rgba(245,166,35,0.7)';
-                    ctx.font = '10px Inter';
-                    ctx.fillText('Rithwick B.', this.x + 8, this.y + 3);
-                }
-            }
-        }
-
-        function initNeural() {
-            resizeCanvas();
-            nodes = students.map(s => new Node(s));
-            for(let i=0; i<10; i++) {
-                nodes.push(new Node({name: "ghost", status: "mid", risk: false}));
-            }
-        }
-
-        function animateNeural() {
-            ctx.clearRect(0, 0, width, height);
-
-            for(let i=0; i<nodes.length; i++) {
-                for(let j=i+1; j<nodes.length; j++) {
-                    const dx = nodes[i].x - nodes[j].x;
-                    const dy = nodes[i].y - nodes[j].y;
-                    const dist = Math.sqrt(dx*dx + dy*dy);
-
-                    if(dist < 100) {
-                        ctx.beginPath();
-                        ctx.moveTo(nodes[i].x, nodes[i].y);
-                        ctx.lineTo(nodes[j].x, nodes[j].y);
-                        
-                        const opacity = (1 - dist/100) * 0.15;
-                        if(nodes[i].isTop || nodes[j].isTop) {
-                            ctx.strokeStyle = `rgba(0,242,255,${opacity * 1.5})`;
-                        } else if(nodes[i].student.risk || nodes[j].student.risk) {
-                            ctx.strokeStyle = `rgba(245,166,35,${opacity})`;
-                        } else {
-                            ctx.strokeStyle = `rgba(100,116,139,${opacity})`;
-                        }
-                        ctx.lineWidth = 1;
-                        ctx.stroke();
-                    }
-                }
-            }
-
-            nodes.forEach(n => {
-                n.update();
-                n.draw();
-            });
-
-            requestAnimationFrame(animateNeural);
-        }
-
-        window.addEventListener('resize', initNeural);
-        initNeural();
-        animateNeural();
-
+    <script src="teacher_dashboard.js">
     </script>
 </body>
 </html>
