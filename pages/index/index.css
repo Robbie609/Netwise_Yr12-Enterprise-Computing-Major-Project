@@ -152,8 +152,8 @@ text-transform: uppercase;
 letter-spacing: 1px;
 font-size: 0.9rem;
 }
-.btn-student { background: var(--cyan); color: #000; box-shadow: 0 0 20px rgba(0, 242, 255, 0.4); }
-.btn-teacher { border: 2px solid var(--darkblue); color: var(--text-main); }
+.btn-login { background: var(--cyan); color: #000; box-shadow: 0 0 20px rgba(0, 242, 255, 0.4); }
+.btn-signup { border: 2px solid var(--darkblue); color: var(--text-main); }
 .btn:hover { transform: translateY(-5px); filter: brightness(1.2); }
 
 /* Mobile Adjustments */
