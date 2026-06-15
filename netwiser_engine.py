@@ -60,7 +60,36 @@ class LocalBridge(BaseHTTPRequestHandler):
             self.wfile.write(json.dumps({
                 "success": success
             }).encode('utf-8'))
+        elif self.path == '/student_dashboard':
+            content_length = int(self.headers['Content-Length'])
+            data = json.loads(self.rfile.read(content_length).decode('utf-8'))
 
+            user_id = data.get("user_id")
+
+            from backend.database import get_student_dashboard_data
+
+            dashboard = get_student_dashboard_data(user_id)
+
+            self.send_response(200)
+            self.send_header('Content-type', 'application/json')
+            self.send_header('Access-Control-Allow-Origin', '*')
+            self.end_headers()
+
+            # ---------------------------------------------------------
+            # FIX: Wrap the dashboard payload inside a success envelope
+            # ---------------------------------------------------------
+            if dashboard:
+                response_payload = {
+                    "success": True,
+                    "profile": dashboard
+                }
+            else:
+                response_payload = {
+                    "success": False,
+                    "message": "Student profile not found."
+                }
+
+            self.wfile.write(json.dumps(response_payload).encode('utf-8'))
     # ------------------------
     # RESPONSE HANDLER
     # ------------------------

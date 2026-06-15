@@ -1,117 +1,243 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Netwiser</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link href="student_dashboard.css" rel="stylesheet">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Netwiser | Student Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="student_dashboard.css">
 </head>
 <body>
 
-    <canvas id="bg-canvas"></canvas>
-    <div class="bg-overlay"></div>
+<canvas id="bg-canvas"></canvas>
+<div class="bg-overlay"></div>
 
-    <div id="login-view">
-        <div class="login-card" id="login-box">
-            <h1>Class Access</h1>
-            <p>Enter your class code.</p>
-            <div class="error-msg" id="error-msg">Incorrect access code. Please check again.</div>
-            <div class="input-group">
-                <input type="text" id="class-code" placeholder="ENTER CODE" autocomplete="off" spellcheck="false">
-            </div>
-            <br>
-            <button class="btn-glow" id="access-btn">Submit Code</button>
-        </div>
+<!-- LOADING SCREEN -->
+<div id="loading-view">
+  <div class="loading-inner">
+    <svg class="loading-shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-4z"/>
+      <path d="M9 12l2 2 4-4"/>
+    </svg>
+    <span class="loading-label">Authenticating session…</span>
+  </div>
+</div>
+
+<!-- MAIN DASHBOARD -->
+<div id="dashboard-view">
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="nav-left">
+      <div class="logo">
+        <img src="assets\images\Logo1.png" style="width:20%; height:20%;">
+      </div>
+      <div class="nav-links">
+        <a href="#overview" class="nav-item active" data-section="overview">Overview</a>
+        <a href="#lessons" class="nav-item" data-section="lessons">Lessons</a>
+        <a href="#results" class="nav-item" data-section="results">Results</a>
+        <a href="#achievements" class="nav-item" data-section="achievements">Achievements</a>
+      </div>
     </div>
-
-    <div id="dashboard-view">
-        
-        <nav class="navbar">
-            <div class="nav-left">
-                <div class="logo"><img src="Logo2.png" style="width: 45px; height: 45px;" alt="Netwiser Icon"></div>
-                <div style="padding-right: 55%;"class="nav-links">
-                    <a href="#" class="nav-item active">
-                        <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 9.75L12 4l9 5.75v9.25a1 1 0 0 1-1 1h-5.5v-6h-5v6H4a1 1 0 0 1-1-1V9.75z"/>
-                        </svg>
-                        <span>Dashboard</span>
-                    </a>
-                    <a href="#" class="nav-item">
-                        <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 8.79 5 6.5 5A4.5 4.5 0 0 0 2 9.5V18a1 1 0 0 0 1.447.894C4.91 18.188 6.36 18 8 18c2.11 0 3.916.314 4 .5.084-.186 1.89-.5 4-.5 1.64 0 3.09.188 4.553.894A1 1 0 0 0 22 18V9.5A4.5 4.5 0 0 0 17.5 5c-2.29 0-4.332.477-5.5 1.253z"/>
-                        </svg>
-                        <span>Courses</span>
-                    </a>
-                </div>
-            </div>
-            <div class="nav-right">
-                <div class="notification-wrapper">
-                    <button class="notification-btn">
-                        <svg fill="none" viewBox="0 0 24 24" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 0 1-5.714 0M18 8.25a6 6 0 1 0-12 0c0 7.372-3 8.25-3 8.25h18s-3-.878-3-8.25Zm-4.243 11.243a3 3 0 0 1-5.514 0"/>
-                        </svg>
-                        <div class="notification-badge">3</div>
-                    </button>
-                </div>
-                <div class="profile-wrapper">
-                    <button class="profile-btn" id="profileBtn">
-                        <svg fill="none" viewBox="0 0 24 24" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6.75a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.5 20.25a7.5 7.5 0 0 1 15 0"/>
-                        </svg>
-                    </button>
-                    <div class="profile-dropdown" id="profileDropdown">
-                        <div class="profile-header">
-                            <div class="profile-avatar">
-                                <svg fill="none" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6.75a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.5 20.25a7.5 7.5 0 0 1 15 0"/></svg>
-                            </div>
-                            <div>
-                                <div class="profile-name">Student1</div>
-                                <div class="profile-email">student1@netwiser.edu</div>
-                            </div>
-                        </div>
-                        <div class="dropdown-divider"></div>
-                        <a href="#" class="dropdown-item">My Profile</a>
-                        <a href="#" class="dropdown-item">About Us</a>
-                        <div class="dropdown-divider"></div>
-                        <a href="login_students.html" class="dropdown-item logout-item" onclick="location.reload()">Logout</a>
-                    </div>
-                </div>
-            </div>
-        </nav>
-
-        <div class="hero-container">
-            <div class="hero-card" id="hero-card">
-                <div class="hero-content" id="hero-text-zone">
-                    <div class="hero-label" id="hero-tag">Mission Progress</div>
-                    <h2 class="hero-title" id="hero-title">Password Power</h2>
-                    <p class="hero-desc" id="hero-desc">Loading parameters...</p>
-                    <div class="progress-container">
-                        <div class="progress-bar" id="hero-progress"></div>
-                    </div>
-                    <button class="btn-outline" id="hero-btn">Launch Mission</button>
-                </div>
-                <div class="hero-graphic" id="hero-graphic-zone">
-                    <div class="cyber-shield-3d" id="hero-icon-container">
-                        </div>
-                </div>
-            </div>
+    <div class="profile-container">
+      <button class="nav-utility-btn" id="profile-toggle" aria-label="Profile menu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+          <circle cx="12" cy="7" r="4"/>
+        </svg>
+      </button>
+      <div class="profile-dropdown" id="profile-dropdown">
+        <div class="profile-name" id="profile-name"> -</div>
+        <div class="profile-email" id="profile-email">-</div>
+        <div class="profile-meta-details">
+          <span class="meta-tag" id="profile-year-tag">-</span>
+          <span class="meta-tag" id="profile-class-tag">-</span>
         </div>
-
-        <div class="roadmap-wrapper">
-            <div class="roadmap-header">
-                <h3>Digital Safety Pathway</h3>
-                <p>Select any open module to focus your dashboard viewport.</p>
-            </div>
-
-            <div class="hologram-panel">
-                <div class="vertical-tree" id="vertical-tree-root">
-                    </div>
-            </div>
-        </div>
+        <div class="dropdown-divider"></div>
+        <a href="#" class="dropdown-item" id="logout-btn">Sign Out</a>
+      </div>
     </div>
+  </nav>
 
-    <script src="student_dashboard.js">
-    </script>
+  <main class="dashboard-container">
+
+    <!-- ═══ SECTION: OVERVIEW ═══ -->
+    <section id="overview">
+
+      <!-- HERO BANNER -->
+      <div class="hero-section">
+        <div class="hero-left">
+          <p class="hero-eyebrow">STUDENT PORTAL</p>
+          <h1 class="welcome-heading">Welcome back, <span id="hero-first-name">-</span></h1>
+          <div class="hero-matrix-meta">
+            <div class="meta-block">
+              <span class="meta-label">YEAR LEVEL</span>
+              <span class="meta-val" id="hero-year-level">-</span>
+            </div>
+            <div class="meta-block">
+              <span class="meta-label">CLASS</span>
+              <span class="meta-val" id="hero-class-assignment">-</span>
+            </div>
+            <div class="meta-block">
+              <span class="meta-label">TEACHER</span>
+              <span class="meta-val" id="hero-teacher">-</span>
+            </div>
+          </div>
+        </div>
+        <div class="hero-right">
+          <div class="radial-progress-wrapper">
+            <svg class="progress-ring" width="148" height="148" viewBox="0 0 148 148">
+              <circle cx="74" cy="74" r="64" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="8"/>
+              <circle id="hero-progress-circle" cx="74" cy="74" r="64" fill="none" stroke="url(#ringGrad)" stroke-width="8" stroke-linecap="round" stroke-dasharray="402.1" stroke-dashoffset="402.1"/>
+              <defs>
+                <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stop-color="#0055ff"/>
+                  <stop offset="100%" stop-color="#00f2ff"/>
+                </linearGradient>
+              </defs>
+            </svg>
+            <div class="radial-progress-text">
+              <span class="rad-num" id="hero-progress-num">0%</span>
+              <span class="rad-lbl">COMPLETE</span>
+            </div>
+          </div>
+          <div class="hero-stat-pills">
+            <div class="stat-pill">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--lightblue)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+              <span id="stat-lessons-pill">0/0 Lessons</span>
+            </div>
+            <div class="stat-pill">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 1 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+              <span id="stat-quizzes-pill">0/0 Quizzes</span>
+            </div>
+            <div class="stat-pill">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+              <span id="stat-sims-pill">0/0 Simulations</span>
+            </div>
+          </div>
+        </div>
+      </div>
+<br>
+      <!-- BENTO ROW 1: Performance + Announcements -->
+      <div class="bento-grid two-col">
+
+        <!-- PERFORMANCE -->
+        <div class="bento-card card-glow-blue">
+          <div class="card-header">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--lightblue)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+            <h3>Performance Overview</h3>
+          </div>
+          <div class="perf-metrics" id="perf-metrics">
+            <div class="perf-row">
+              <span class="perf-lbl">Lessons</span>
+              <div class="perf-bar-track"><div class="perf-bar-fill blue" id="perf-lessons-bar"></div></div>
+              <span class="perf-val" id="perf-lessons-val">0 / 0</span>
+            </div>
+            <div class="perf-row">
+              <span class="perf-lbl">Quizzes</span>
+              <div class="perf-bar-track"><div class="perf-bar-fill cyan" id="perf-quizzes-bar"></div></div>
+              <span class="perf-val" id="perf-quizzes-val">0 / 0</span>
+            </div>
+            <div class="perf-row">
+              <span class="perf-lbl">Simulations</span>
+              <div class="perf-bar-track"><div class="perf-bar-fill purple" id="perf-sims-bar"></div></div>
+              <span class="perf-val" id="perf-sims-val">0 / 0</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- ANNOUNCEMENTS -->
+        <div class="bento-card card-glow-blue">
+          <div class="card-header">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--lightblue)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l18-5v12L3 14v-3z"/><path d="M11 14v6a2 2 0 0 0 4 0v-1"/></svg>
+            <h3>Teacher Announcements</h3>
+          </div>
+          <div class="scrollable-card-body" id="announcements-list"></div>
+        </div>
+
+      </div>
+<br>
+      <!-- BENTO ROW 2: Achievements + Active Lesson Preview -->
+      <div class="bento-grid two-col">
+
+        <!-- ACHIEVEMENTS -->
+        <div class="bento-card card-glow-cyan" id="achievements">
+          <div class="card-header">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M8.5 13.5L7 22l5-3 5 3-1.5-8.5"/></svg>
+            <h3>Earned Achievements</h3>
+          </div>
+          <div class="scrollable-card-body" id="achievements-list"></div>
+        </div>
+
+        <!-- ACTIVE LESSON PREVIEW -->
+        <div class="bento-card preview-viewport-card card-glow-blue" id="preview-card">
+          <div class="preview-eyebrow">
+            <span class="hero-label" id="preview-topic">-</span>
+            <span class="diff-badge" id="preview-diff">-</span>
+          </div>
+          <h2 class="hero-title" id="preview-title">-</h2>
+          <p class="hero-desc" id="preview-description">Select a lesson from the roadmap below.</p>
+          <div class="progress-container"><div class="progress-bar" id="preview-progress-bar"></div></div>
+          <div class="preview-footer">
+            <span class="preview-pct" id="preview-progress-text">0% COMPLETE</span>
+            <button class="btn-action" id="preview-action-btn">-</button>
+          </div>
+          <div class="preview-scores" id="preview-scores"></div>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- ═══ SECTION: LESSON ROADMAP ═══ -->
+    <section id="lessons" class="roadmap-wrapper">
+      <div class="section-header-row">
+        <h2 class="section-title">Lesson Roadmap</h2>
+        <span class="section-sub" id="roadmap-sub">-</span>
+      </div>
+      <div class="hologram-panel">
+        <div class="vertical-tree" id="roadmap-tree"></div>
+      </div>
+    </section>
+
+    <!-- ═══ SECTION: QUIZ & SIMULATION RESULTS ═══ -->
+    <section id="results">
+      <div class="section-header-row">
+        <h2 class="section-title">Quiz &amp; Simulation Results</h2>
+      </div>
+      <div class="results-grid" id="results-grid"></div>
+    </section>
+
+  </main>
+</div>
+
+<!-- AI ASSISTANT -->
+<div class="ai-fixed-anchor-pane">
+  <div class="ai-window-box" id="ai-window">
+    <div class="ai-window-header">
+      <div class="ai-header-left">
+        <h4>Meet Nexis: The Cyber Assistant</h4>
+      </div>
+      <button class="close-window-btn" id="ai-close-btn">&times;</button>
+    </div>
+    <div class="ai-window-body">
+      <div class="ai-chat-log" id="ai-chat-log"></div>
+      <div class="ai-input-footer">
+        <input type="text" placeholder="Ask a question…" id="ai-chat-input" autocomplete="off"/>
+        <button id="ai-send-btn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+  <button class="ai-fab-btn" id="ai-fab-btn">
+<img src="https://uxwing.com/wp-content/themes/uxwing/download/communication-chat-call/chatbot-icon.png" style="width:20px;height:20px;">
+    Nexis
+  </button>
+</div>
+
+<script src="student_dashboard.js"></script>
 </body>
 </html>

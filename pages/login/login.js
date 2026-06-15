@@ -41,11 +41,19 @@ loginForm.addEventListener("submit", async (e) => {
 
         // ROLE ROUTING (NETWISER FIX)
         if (data.role === "student") {
-            window.location.href = "../students/student_dashboard.html";
-        } 
+
+            sessionStorage.setItem(
+            "netwiser_user",
+            JSON.stringify(data.user));
+
+            window.location.href ="../students/student_dashboard.html";
+}
         else if (data.role === "teacher") {
-            window.location.href = "../teacher/teacher_dashboard.html";
-        } 
+
+            sessionStorage.setItem("netwiser_user",JSON.stringify(data.user));
+
+            window.location.href ="../teacher/teacher_dashboard.html";
+}
         else {
             throw new Error("Unknown role access denied");
         }

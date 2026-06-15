@@ -1,1 +1,0 @@
-Netwiser is an interactive cybersecurity learning platform designed for Year 6 – 8 students. It transforms cyber safety education into an engaging game like experience with guided missions
