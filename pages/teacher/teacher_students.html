@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Netwiser | Students</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="teacher_dashboard.css">
+<link rel="stylesheet" href="teacher_students.css">
+</head>
+<body>
+
+<div id="loading-view">
+  <div class="loading-inner">
+    <svg class="loading-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
+      <path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+    </svg>
+    <span class="loading-label">Loading students…</span>
+  </div>
+</div>
+
+<div id="error-view" style="display:none">
+  <div class="error-inner">
+    <svg viewBox="0 0 24 24" fill="none" stroke="var(--error)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="40" height="40"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+    <p id="error-message">Something went wrong loading student data.</p>
+    <button class="btn-retry" id="retry-btn">Retry</button>
+  </div>
+</div>
+
+<div id="dashboard-view">
+  <nav class="navbar">
+    <div class="nav-left">
+      <div class="logo">
+        <img src="C:\Users\2rm2j\Documents\Enterprise\Project\Netwiser_Yr12-Enterprise-Computing-Major-Project\assets\images\Logo1.png"style="flex-shrink: 0;height: 30px;width: auto;display: block;" alt="Netwiser Logo">
+      </div>
+      <nav class="nav-links">
+        <a href="teacher_dashboard.html" class="nav-item">Overview</a>
+        <a href="students.html" class="nav-item active">Students</a>
+        <a href="teacher_dashboard.html" class="nav-item">Progress</a>
+        <a href="teacher_dashboard.html" class="nav-item">Announcements</a>
+      </nav>
+    </div>
+    <div class="nav-right">
+      <div id="class-pills"></div>
+      <div class="profile-wrap">
+        <button class="profile-btn" id="profile-toggle">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </button>
+        <div class="profile-dropdown" id="profile-dropdown">
+          <p class="pd-name" id="pd-name">—</p>
+          <p class="pd-email" id="pd-email">—</p>
+          <p class="pd-school" id="pd-school">—</p>
+          <div class="pd-divider"></div>
+          <a href="#" class="pd-logout" id="logout-btn">Sign Out</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main class="page">
+    <div class="sec-header">
+      <h2 class="sec-title">Students</h2>
+      <span class="sec-sub" id="students-sub">—</span>
+    </div>
+
+    <div class="toolbar">
+      <input type="text" id="search-input" class="search-input" placeholder="Search students…"/>
+      <select id="sort-select" class="sort-select">
+        <option value="rank">Sort: Engagement</option>
+        <option value="name">Sort: Name</option>
+        <option value="progress">Sort: Progress</option>
+        <option value="quiz">Sort: Quiz Avg</option>
+        <option value="sim">Sort: Sim Avg</option>
+      </select>
+      <label class="risk-filter">
+        <input type="checkbox" id="risk-only-checkbox"/> At-risk only
+      </label>
+    </div>
+
+    <div class="table-wrap" id="table-wrap"></div>
+
+    <div class="drilldown" id="drilldown" style="display:none">
+      <div class="dd-head">
+        <h3 id="dd-title">Student Detail</h3>
+        <button class="dd-close" id="dd-close">&times;</button>
+      </div>
+      <div class="dd-body" id="dd-body"></div>
+    </div>
+  </main>
+</div>
+
+<script src="teacher_students.js"></script>
+</body>
+</html>

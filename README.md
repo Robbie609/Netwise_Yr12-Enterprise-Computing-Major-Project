@@ -135,10 +135,7 @@ Install the Python extension published by Microsoft.
 
 ### 📂 Project Installation
 
-1. Download the NetWiser project.
-2. Extract the project folder.
-3. Open the project in Visual Studio Code.
-4. Ensure all project files remain in their original structure.
+1. 
 
 ### ▶️ Running NetWiser
 

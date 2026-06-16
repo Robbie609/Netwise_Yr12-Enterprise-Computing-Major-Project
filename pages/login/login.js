@@ -124,7 +124,7 @@ for (let y = 0; y <= height; y += gridSize) {
 const d = Math.hypot(x - mouse.x, y - mouse.y);
 if (d < glowRadius) {
 const s = 1 - (d / glowRadius);
-ctx.fillStyle = `rgba(0, 242, 255, ${s * 0.5})`;
+ctx.fillStyle = `rgba(0, 242, 255, ${s * 2})`;
 ctx.fillRect(x - 1, y - 1, 2, 2);
 }
 }

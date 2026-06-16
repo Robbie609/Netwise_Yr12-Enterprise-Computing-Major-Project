@@ -784,6 +784,196 @@ def get_student_dashboard_data(user_id):
     }
 
     return profile
+def get_teacher_dashboard_data(user_id):
+    """
+    Builds the full payload required by the Teacher Dashboard for the
+    teacher linked to the given user_id. Returns None if the user_id
+    does not correspond to a teacher.
+    """
+    teacher = get_teacher_by_user_id(user_id)
+    if not teacher:
+        return None
 
+    user = get_user_by_id(user_id)
+    teacher_id = teacher["teacher_id"]
 
-# ----------------------------
+    classes = get_classes_by_teacher_id(teacher_id)
+
+    lessons = get_all_lessons()
+    all_modules = get_all_modules()
+    quizzes = get_all_quizzes()
+    simulations = get_all_simulations()
+
+    modules_by_lesson = {}
+    for m in all_modules:
+        modules_by_lesson.setdefault(m["lesson_id"], []).append(m)
+
+    quizzes_by_lesson = {q["lesson_id"]: q for q in quizzes}
+    sims_by_lesson = {}
+    for s in simulations:
+        sims_by_lesson.setdefault(s["lesson_id"], []).append(s)
+
+    students = []
+    for c in classes:
+        students.extend(get_students_by_class_id(c["class_id"]))
+
+    student_ids = [s["student_id"] for s in students]
+
+    progress_rows = get_module_progress_for_students(student_ids)
+    quiz_results = get_quiz_results_for_students(student_ids)
+    sim_results = get_simulation_results_for_students(student_ids)
+
+    progress_by_student = {}
+    for p in progress_rows:
+        progress_by_student.setdefault(p["student_id"], []).append(p)
+
+    quiz_by_student = {}
+    for q in quiz_results:
+        quiz_by_student.setdefault(q["student_id"], []).append(q)
+
+    sim_by_student = {}
+    for s in sim_results:
+        sim_by_student.setdefault(s["student_id"], []).append(s)
+
+    total_modules = len(all_modules)
+
+    student_payload = []
+    for s in students:
+        sid = s["student_id"]
+        s_progress = progress_by_student.get(sid, [])
+        completed_modules = sum(1 for p in s_progress if p["status"] == "Completed")
+
+        module_progress_pct = round((completed_modules / total_modules) * 100) if total_modules else 0
+
+        s_quiz_results = quiz_by_student.get(sid, [])
+        avg_quiz_score = round(sum(r["score"] for r in s_quiz_results) / len(s_quiz_results)) if s_quiz_results else 0
+
+        s_sim_results = sim_by_student.get(sid, [])
+        avg_sim_score = round(sum(r["score"] for r in s_sim_results) / len(s_sim_results)) if s_sim_results else 0
+
+        scores = [module_progress_pct,avg_quiz_score,avg_sim_score]
+        engagement = round((module_progress_pct * 0.5) +(avg_quiz_score * 0.3) +(avg_sim_score * 0.2)
+)
+
+        class_row = next((c for c in classes if c["class_id"] == s["class_id"]), None)
+
+        # Enrich with per-quiz and per-sim detail for teacher drill-down
+        all_quizzes_map = {q["quiz_id"]: q for q in quizzes}
+        all_sims_map    = {s2["simulation_id"]: s2 for s2 in simulations}
+
+        quiz_detail = [
+            {
+                "quiz_id":   r["quiz_id"],
+                "title":     all_quizzes_map.get(r["quiz_id"], {}).get("title", r["quiz_id"]),
+                "lesson_id": all_quizzes_map.get(r["quiz_id"], {}).get("lesson_id", ""),
+                "score":     r["score"],
+            }
+            for r in s_quiz_results
+        ]
+
+        sim_detail = [
+            {
+                "simulation_id": r["simulation_id"],
+                "title":         all_sims_map.get(r["simulation_id"], {}).get("title", r["simulation_id"]),
+                "difficulty":    all_sims_map.get(r["simulation_id"], {}).get("difficulty", ""),
+                "lesson_id":     all_sims_map.get(r["simulation_id"], {}).get("lesson_id", ""),
+                "score":         r["score"],
+            }
+            for r in s_sim_results
+        ]
+
+        student_payload.append({
+            "student_id": sid,
+            "first_name": s["first_name"],
+            "last_name": s["last_name"],
+            "year_level": s["year_level"],
+            "class_id": s["class_id"],
+            "class_code": class_row["class_code"] if class_row else "",
+            "module_progress_pct": module_progress_pct,
+            "avg_quiz_score": avg_quiz_score,
+            "avg_sim_score": avg_sim_score,
+            "engagement": engagement,
+            "modules_completed": completed_modules,
+            "modules_total": total_modules,
+            "at_risk": engagement < 70,
+            "quiz_results": quiz_detail,
+            "sim_results":  sim_detail,
+        })
+
+    student_payload.sort(key=lambda s: s["engagement"], reverse=True)
+    for i, s in enumerate(student_payload):
+        s["rank"] = i + 1
+        s["is_top"] = (i == 0)
+
+    # Module-level (lesson-level) progression across all students in
+    # this teacher's classes.
+    module_payload = []
+    for lesson in lessons:
+        modules = modules_by_lesson.get(lesson["lesson_id"], [])
+        if not modules:
+            continue
+
+        statuses = []
+        for m in modules:
+            for sid in student_ids:
+                for p in progress_by_student.get(sid, []):
+                    if p["module_id"] == m["module_id"]:
+                        statuses.append(p["status"])
+
+        total_possible = len(modules) * len(student_ids) if student_ids else 0
+        completed_count = sum(1 for st in statuses if st == "Completed")
+        in_progress_count = sum(1 for st in statuses if st == "In Progress")
+
+        progress_pct = round((completed_count / total_possible) * 100) if total_possible else 0
+
+        if total_possible == 0:
+            module_status = "Locked"
+        elif completed_count == total_possible:
+            module_status = "Completed"
+        elif completed_count > 0 or in_progress_count > 0:
+            module_status = "In Progress"
+        else:
+            module_status = "Locked"
+
+        module_payload.append({
+            "lesson_id": lesson["lesson_id"],
+            "title": lesson["title"],
+            "topic": lesson["topic"],
+            "difficulty": lesson["difficulty"],
+            "description": lesson["description"],
+            "status": module_status,
+            "progress": progress_pct,
+        })
+
+    # Class-wide aggregate stats
+    if student_payload:
+        class_activity = round(sum(s["engagement"] for s in student_payload) / len(student_payload))
+    else:
+        class_activity = 0
+
+    active_modules = sum(1 for m in module_payload if m["status"] != "Locked")
+    at_risk_students = [s for s in student_payload if s["at_risk"]]
+    top_performer = student_payload[0] if student_payload else None
+
+    announcements = get_announcements_by_teacher_id(teacher_id)
+
+    profile = {
+        "teacher_id": teacher_id,
+        "first_name": teacher["first_name"],
+        "last_name": teacher["last_name"],
+        "school": teacher["school"],
+        "email": user["email"] if user else "",
+        "classes": classes,
+        "stats": {
+            "class_activity": class_activity,
+            "active_modules": active_modules,
+            "total_modules": len(module_payload),
+            "at_risk_count": len(at_risk_students),
+            "top_performer": f"{top_performer['first_name']} {top_performer['last_name']}" if top_performer else "",
+        },
+        "students": student_payload,
+        "modules": module_payload,
+        "at_risk_students": at_risk_students,
+        "announcements": announcements,
+    }
+    return profile

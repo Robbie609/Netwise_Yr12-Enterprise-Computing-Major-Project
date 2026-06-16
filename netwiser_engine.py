@@ -90,6 +90,36 @@ class LocalBridge(BaseHTTPRequestHandler):
                 }
 
             self.wfile.write(json.dumps(response_payload).encode('utf-8'))
+
+        elif self.path == '/teacher_dashboard':
+            content_length = int(self.headers['Content-Length'])
+            data = json.loads(
+            self.rfile.read(content_length).decode('utf-8'))
+
+            user_id = data.get("user_id")
+
+            from backend.database import get_teacher_dashboard_data
+
+            dashboard = get_teacher_dashboard_data(user_id)
+
+            self.send_response(200)
+            self.send_header('Content-type', 'application/json')
+            self.send_header('Access-Control-Allow-Origin', '*')
+            self.end_headers()
+
+            if dashboard:
+                response_payload = {
+                    "success": True,
+                    "profile": dashboard
+                }
+            else:
+                response_payload = {
+                    "success": False
+                }
+
+            self.wfile.write(
+                json.dumps(response_payload).encode('utf-8')
+            )
     # ------------------------
     # RESPONSE HANDLER
     # ------------------------

@@ -1,366 +1,527 @@
- // Profile Dropdown Toggle
-        const profileBtn = document.getElementById('profileBtn');
-        const profileDropdown = document.getElementById('profileDropdown');
+const API_BASE = "http://127.0.0.1:8765";
+let activeProfile = null;
+let activeClassId = null;
+let radarRAF = null;
 
-        profileBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            profileDropdown.classList.toggle('show');
-        });
+const ICON_ANNOUNCE = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l18-5v12L3 14v-3z"/><path d="M11 14v6a2 2 0 0 0 4 0v-1"/></svg>`;
 
-        document.addEventListener('click', () => {
-            if (profileDropdown.classList.contains('show')) {
-                profileDropdown.classList.remove('show');
-            }
-        });
+document.addEventListener("DOMContentLoaded", () => {
+  bindNavEvents();
+  bindAnnouncementForm();
+  initBgCanvas();
+  initSession();
+});
 
-        // Exact Data Models
-        const students = [
-            { name: "Rowan Robin", engage: 99, status: "top", risk: false },
-            { name: "Tarik Bansal", engage: 95, status: "high", risk: false },
-            { name: "Garv Kumar", engage: 94, status: "high", risk: false },
-            { name: "Parth Gupta", engage: 92, status: "high", risk: false },
-            { name: "Leo Shen", engage: 91, status: "high", risk: false },
-            { name: "Tony Xia", engage: 88, status: "mid", risk: false },
-            { name: "Yazan Al Hatu", engage: 85, status: "mid", risk: false },
-            { name: "Jared Yu", engage: 82, status: "mid", risk: false },
-            { name: "Siddhant Rajkarne", engage: 80, status: "mid", risk: false },
-            { name: "Neel Venkat", engage: 78, status: "mid", risk: false },
-            { name: "Jerrard Hakim", engage: 75, status: "mid", risk: false },
-            { name: "Rigved Gambhir", engage: 65, status: "low", risk: true },
-            { name: "Sai Karthik Ravi", engage: 62, status: "low", risk: true },
-            { name: "Rithwick Baye", engage: 58, status: "low", risk: true }
-        ];
+async function initSession() {
+  const stored = sessionStorage.getItem("netwiser_user");
+  if (!stored) { redirectToLogin(); return; }
+  let sessionUser;
+  try { sessionUser = JSON.parse(stored); } catch { redirectToLogin(); return; }
+  if (!sessionUser?.user_id) { redirectToLogin(); return; }
 
-        const modules = [
-            {
-                id: "pass",
-                title: "Password Power",
-                desc: "Learn how to build strong, memorable password shields that trick sorting bots and brute force dictionary engines.",
-                status: "Completed",
-                progress: 100,
-                color: "#00ffbf",
-                stateClass: "completed",
-                icon: `<svg viewBox="0 0 24 24"><path d="M17 9h-1V7a4 4 0 0 0-8 0v2H7a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7a2 2 0 0 0-2-2zm-7-2a2 2 0 0 1 4 0v2h-4V7zm2 6a1.5 1.5 0 0 1 1.5 1.5c0 .6-.35 1.1-.86 1.34V17h-1.28v-1.16A1.5 1.5 0 0 1 12 13z"/></svg>`
-            },
-            {
-                id: "browse",
-                title: "Safe Browsing",
-                desc: "Identify malicious tracking cookies, secure protocols, and stay safe while surfing modern web domains.",
-                status: "In Progress",
-                progress: 25,
-                color: "#00f2ff",
-                stateClass: "current",
-                icon: `<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>`
-            },
-            {
-                id: "scam",
-                title: "Scam Spotting",
-                desc: "Train your senses to flag phishing traps, social engineering tricks, and fake validation requests instantly.",
-                status: "Locked",
-                progress: 0,
-                color: "#0055ff",
-                stateClass: "locked",
-                icon: `<svg viewBox="0 0 24 24"><ellipse cx="12" cy="12" rx="10" ry="5"></ellipse><circle cx="12" cy="12" r="4"></circle></svg>`
-            },
-            {
-                id: "foot",
-                title: "Digital Footprint",
-                desc: "Analyze your online traces and discover how data brokers assemble profiles based on casual sharing.",
-                status: "Locked",
-                progress: 0,
-                color: "#0055ff",
-                stateClass: "locked",
-                icon: `<img src="https://svgsilh.com/svg/651817.svg" alt="Footprint Icon" style="width: 50%; height: 50%; filter: invert(1) sepia(1) grayscale(1) brightness(200%);">`
-            }
-        ];
+  try {
+    const res = await fetch(`${API_BASE}/teacher_dashboard`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ user_id: sessionUser.user_id })
+    });
+    const data = await res.json();
+    if (!data.success) { redirectToLogin(); return; }
+    activeProfile = data.profile;
 
-        // Render Fixed Module Cards
-        const modGrid = document.getElementById('modulesGrid');
-        modules.forEach(m => {
-            modGrid.innerHTML += `
-                <div class="module-card">
-                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                        <div class="module-icon" style="color: ${m.color}">
-                            ${m.icon}
-                        </div>
-                        <span class="module-meta">${m.status}</span>
-                    </div>
-                    <div style="display: flex; flex-direction: column; gap: 0.4rem;">
-                        <div class="module-title">${m.title}</div>
-                        <div class="module-desc">${m.desc}</div>
-                        <div style="margin-top: 8px;">
-                            <div style="display: flex; justify-content: space-between; font-size: 0.75rem; margin-bottom: 4px; color: var(--text-secondary)">
-                                <span>Progress</span>
-                                <span style="font-family: 'JetBrains Mono', monospace">${m.progress}%</span>
-                            </div>
-                            <div class="sc-progress-track">
-                                <div class="sc-progress-fill" style="width: ${m.progress}%; background: ${m.color}"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-        });
+    console.log("PROFILE", activeProfile);
 
-        // Render Student Grid
-        const stGrid = document.getElementById('studentGrid');
-        students.forEach(st => {
-            // place will show who is #1 and #2 and so on
-            const place = st.status === 'top' ? '1' : st.engage >= 95 ? '2' : st.engage >= 94 ? '3' : st.engage >= 92 ? '4' : st.engage >= 91 ? '5' : st.engage >= 88 ? '6' : st.engage >= 85 ? '7' : st.engage >= 82 ? '8' : st.engage >= 80 ? '9' : st.engage >= 78 ? '10' : st.engage >= 75 ? '11' : st.engage >= 65 ? '12' : st.engage >= 62 ? '13' : st.engage >= 58 ? '14' : '';
-            let cardClass = 'student-card';
-            if(st.status === 'top') cardClass += ' top-performer';
-            if(st.risk) cardClass += ' at-risk';
+    try {
+    enterDashboard();} catch (e) {
+    console.error("DASHBOARD CRASH", e);}
+  } catch {
+    redirectToLogin();
+  }
+}
 
-            stGrid.innerHTML += `
-                <div class="${cardClass}">
-                    <div class="sc-header">
-                        <div class="sc-identity">
-                            <div class="sc-avatar">${place}</div>
-                            <div class="sc-name">${st.name} ${st.status === 'top' ? '👑' : ''}</div>
-                        </div>
-                        <div class="sc-metric">${st.engage}%</div>
-                    </div>
-                    <div class="sc-progress-track">
-                        <div class="sc-progress-fill" style="width: ${st.engage}%"></div>
-                    </div>
-                </div>
-            `;
-        });
+function redirectToLogin() {
+  sessionStorage.removeItem("netwiser_user");
+  window.location.href = "../login/login.html";
+}
+function logout() {
+  sessionStorage.removeItem("netwiser_user");
+  window.location.href = "../login/login.html";
+}
+function enterDashboard() {
+  const loading = document.getElementById("loading-view");
+  const dash = document.getElementById("dashboard-view");
+  loading.classList.add("hidden");
+  setTimeout(() => { loading.style.display = "none"; }, 400);
+  dash.classList.add("active");
+  renderDashboard();
+}
 
-        // Cyber Threat Radar Visualization Panel
-        const radarCanvas = document.getElementById('radarCanvas');
-        const rCtx = radarCanvas.getContext('2d');
-        let sweepAngle = 0;
-        
-        const blips = [
-            { r: 45, angle: 1.2, color: '#10B981', size: 4, label: "SYS_OK" }, // Green
-            { r: 75, angle: 3.8, color: '#f5a623', size: 5, label: "ATTACK_VECT" }, // Yellow
-            { r: 90, angle: 5.5, color: '#ff4757', size: 5, label: "BREACH_SUSP" }  // Red
-        ];
+function bindNavEvents() {
+  const toggle = document.getElementById("profile-toggle");
+  const dropdown = document.getElementById("profile-dropdown");
+  const logoutBtn = document.getElementById("logout-btn");
 
-        function drawRadar() {
-            const cx = radarCanvas.width / 2;
-            const cy = radarCanvas.height / 2;
-            const maxRadius = 100;
+  toggle.addEventListener("click", e => { e.stopPropagation(); dropdown.classList.toggle("active"); });
+  document.addEventListener("click", e => {
+    if (!dropdown.contains(e.target) && e.target !== toggle) dropdown.classList.remove("active");
+  });
+  logoutBtn.addEventListener("click", e => { e.preventDefault(); logout(); });
 
-            rCtx.clearRect(0, 0, radarCanvas.width, radarCanvas.height);
+  document.querySelectorAll(".nav-item[data-sec]").forEach(link => {
+    link.addEventListener("click", e => {
+      e.preventDefault();
+      document.getElementById(link.dataset.sec)?.scrollIntoView({ behavior:"smooth", block:"start" });
+      document.querySelectorAll(".nav-item").forEach(l => l.classList.remove("active"));
+      link.classList.add("active");
+    });
+  });
 
-            // Subtle pulsing base system integrity aura
-            const pulseFactor = Math.sin(Date.now() * 0.0025) * 4;
-            
-            // Outer Concentric Rings
-            rCtx.shadowBlur = 0;
-            for(let r = 25; r <= maxRadius; r += 25) {
-                rCtx.beginPath();
-                rCtx.arc(cx, cy, r + (r === maxRadius ? pulseFactor * 0.3 : 0), 0, Math.PI * 2);
-                rCtx.strokeStyle = `rgba(0, 242, 255, ${0.05 + (r / 500)})`;
-                rCtx.lineWidth = 1;
-                rCtx.stroke();
-            }
+  document.getElementById("dd-close").addEventListener("click", () => {
+    document.getElementById("drilldown").style.display = "none";
+  });
+}
 
-            // Crosshairs axes
-            rCtx.beginPath();
-            rCtx.moveTo(cx - maxRadius, cy); rCtx.lineTo(cx + maxRadius, cy);
-            rCtx.moveTo(cx, cy - maxRadius); rCtx.lineTo(cx, cy + maxRadius);
-            rCtx.strokeStyle = 'rgba(255, 255, 255, 0.03)';
-            rCtx.stroke();
+function renderDashboard() {
+  if (!activeProfile) return;
+  renderProfile();
+  renderHero();
+  renderClassPills();
+  renderKPIs();
+  renderAtRisk();
+  renderStudents();
+  renderLessonProgress();
+  renderAnnouncements();
+  startRadar();
+}
 
-            // Draw Threat Blips
-            blips.forEach(blip => {
-                const bx = cx + blip.r * Math.cos(blip.angle);
-                const by = cy + blip.r * Math.sin(blip.angle);
+function renderProfile() {
+  const p = activeProfile;
 
-                // Calculate proximity to sweep line for fade trace effect
-                let angleDiff = sweepAngle - blip.angle;
-                while (angleDiff < 0) angleDiff += Math.PI * 2;
-                angleDiff = angleDiff % (Math.PI * 2);
+  document.getElementById("pd-name").textContent =
+    `${p.first_name} ${p.last_name}`;
 
-                let alpha = 0.15;
-                if (angleDiff < 1.5) {
-                    alpha = 1.0 - (angleDiff / 1.5);
-                }
+  document.getElementById("pd-email").textContent =
+    p.email || "";
 
-                rCtx.beginPath();
-                rCtx.arc(bx, by, blip.size, 0, Math.PI * 2);
-                rCtx.fillStyle = blip.color;
-                rCtx.shadowBlur = 12;
-                rCtx.shadowColor = blip.color;
-                rCtx.globalAlpha = Math.max(alpha, 0.15);
-                rCtx.fill();
-                rCtx.globalAlpha = 1.0;
-            });
-            rCtx.shadowBlur = 0;
+  document.getElementById("pd-school").textContent =
+    p.school || "";
+}
 
-            // Core Network Status Integrity Center Node
-            rCtx.beginPath();
-            rCtx.arc(cx, cy, 6 + pulseFactor * 0.5, 0, Math.PI * 2);
-            rCtx.fillStyle = '#00f2ff';
-            rCtx.shadowBlur = 15;
-            rCtx.shadowColor = '#00f2ff';
-            rCtx.fill();
-            rCtx.shadowBlur = 0;
+function renderHero() {
+  const p = activeProfile;
+  const s = p.stats || {};
 
-            // Sweep Line
-            const sx = cx + maxRadius * Math.cos(sweepAngle);
-            const sy = cy + maxRadius * Math.sin(sweepAngle);
+  document.getElementById("hero-name").textContent =
+    `${p.first_name} ${p.last_name}`;
 
-            // Draw sweep gradient trail using canvas arc
-            rCtx.beginPath();
-            rCtx.moveTo(cx, cy);
-            rCtx.arc(cx, cy, maxRadius, sweepAngle, sweepAngle - 0.4, true);
-            rCtx.closePath();
-            let gradient = rCtx.createRadialGradient(cx, cy, 10, cx, cy, maxRadius);
-            gradient.addColorStop(0, 'rgba(0, 242, 255, 0.15)');
-            gradient.addColorStop(1, 'rgba(0, 242, 255, 0.0)');
-            rCtx.fillStyle = gradient;
-            rCtx.fill();
+  document.getElementById("hero-school").textContent =
+    p.school || "";
 
-            // Main sharp sweep arm line
-            rCtx.beginPath();
-            rCtx.moveTo(cx, cy);
-            rCtx.lineTo(sx, sy);
-            rCtx.strokeStyle = 'rgba(0, 242, 255, 0.4)';
-            rCtx.lineWidth = 1.5;
-            rCtx.stroke();
+  document.getElementById("hs-classes").textContent =
+    (p.classes || []).length;
 
-            // Update Sweep Angle position slowly (Ambient cinematic flow)
-            sweepAngle = (sweepAngle + 0.015) % (Math.PI * 2);
+  document.getElementById("hs-students").textContent =
+    filteredStudents().length;
 
-            requestAnimationFrame(drawRadar);
-        }
-        drawRadar();
+  document.getElementById("hs-engagement").textContent =
+    `${s.class_activity || 0}%`;
 
-        // Classroom Neural Network Engine Setup
-        const canvas = document.getElementById('neuralCanvas');
-        const ctx = canvas.getContext('2d');
-        let width, height;
-        let nodes = [];
+  document.getElementById("rl-modules").textContent =
+    `${s.active_modules || 0} / ${s.total_modules || 0}`;
 
-        function resizeCanvas() {
-            const rect = canvas.parentElement.getBoundingClientRect();
-            canvas.width = rect.width;
-            canvas.height = rect.height;
-            width = rect.width;
-            height = rect.height;
-        }
+  document.getElementById("rl-risk").textContent =
+    `${s.at_risk_count || 0} students`;
 
-        class Node {
-            constructor(student) {
-                this.x = Math.random() * width;
-                this.y = Math.random() * height;
-                this.vx = (Math.random() - 0.5) * 0.25;
-                this.vy = (Math.random() - 0.5) * 0.25;
-                this.student = student;
-                this.phase = Math.random() * Math.PI * 2;
-                
-                if(student.status === 'top') {
-                    this.baseSize = 6;
-                    this.color = '#00f2ff';
-                    this.isTop = true;
-                } else if(student.risk) {
-                    this.baseSize = 3;
-                    this.color = '#f5a623';
-                    this.isTop = false;
-                } else if(student.status === 'high') {
-                    this.baseSize = 4.5;
-                    this.color = '#00f2ff';
-                    this.isTop = false;
-                } else {
-                    this.baseSize = 3;
-                    this.color = '#64748b';
-                    this.isTop = false;
-                }
-            }
+  document.getElementById("rl-top").textContent =
+    s.top_performer || "-";
+}
 
-            update() {
-                this.x += this.vx;
-                this.y += this.vy;
 
-                if(this.x < 0 || this.x > width) this.vx *= -1;
-                if(this.y < 0 || this.y > height) this.vy *= -1;
-                
-                this.phase += 0.025;
-            }
+function renderClassPills() {
+  const container = document.getElementById("class-pills");
+  const classes = activeProfile.classes;
+  if (classes.length <= 1) { container.style.display = "none"; return; }
 
-            draw() {
-                let size = this.baseSize;
-                let shadowColor = this.color;
-                let blur = 10;
+  container.innerHTML = classes.map(c => `
+    <button class="class-pill${activeClassId === c.class_id ? " active" : ""}" data-cid="${esc(c.class_id)}">${esc(c.class_code)}</button>
+  `).join("");
 
-                if(this.isTop) {
-                    size += Math.sin(this.phase) * 1.2;
-                    blur = 20 + Math.sin(this.phase) * 5;
-                } else if (this.student.risk) {
-                    size += Math.sin(this.phase * 2.5) * 0.4;
-                    blur = 5 + Math.sin(this.phase * 2.5) * 2;
-                }
+  container.querySelectorAll(".class-pill").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const cid = btn.dataset.cid;
+      activeClassId = (activeClassId === cid) ? null : cid;
+      renderClassPills();
+      renderHero();
+      renderKPIs();
+      renderAtRisk();
+      renderStudents();
+    });
+  });
+}
 
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, size, 0, Math.PI * 2);
-                ctx.fillStyle = this.color;
-                
-                ctx.shadowBlur = blur;
-                ctx.shadowColor = shadowColor;
-                ctx.fill();
-                
-                ctx.shadowBlur = 0;
+function filteredStudents() {
+  const all = activeProfile.students || [];
+  return activeClassId ? all.filter(s => s.class_id === activeClassId) : all;
+}
 
-                if(this.isTop) {
-                    ctx.fillStyle = 'rgba(255,255,255,0.8)';
-                    ctx.font = '500 11px Inter';
-                    ctx.fillText('Rowan R.', this.x + 10, this.y + 4);
-                } else if (this.student.risk && this.student.name === 'Rithwick Baye') {
-                    ctx.fillStyle = 'rgba(245,166,35,0.7)';
-                    ctx.font = '10px Inter';
-                    ctx.fillText('Rithwick B.', this.x + 8, this.y + 3);
-                }
-            }
-        }
+function renderKPIs() {
+  const students = filteredStudents();
+  const s = activeProfile.stats;
+  const avgEngagement = students.length ? Math.round(students.reduce((a,x) => a + x.engagement, 0) / students.length) : 0;
+  const atRiskCount = students.filter(x => x.at_risk).length;
+  const top = students.reduce((best, x) => (!best || x.engagement > best.engagement) ? x : best, null);
 
-        function initNeural() {
-            resizeCanvas();
-            nodes = students.map(s => new Node(s));
-            for(let i=0; i<10; i++) {
-                nodes.push(new Node({name: "ghost", status: "mid", risk: false}));
-            }
-        }
+  document.getElementById("kpi-engagement").textContent = `${avgEngagement}%`;
+  document.getElementById("kpi-modules").textContent = `${s.active_modules} / ${s.total_modules}`;
+  document.getElementById("kpi-risk").textContent = `${atRiskCount}`;
+  document.getElementById("kpi-top").textContent = top ? `${top.first_name} ${top.last_name}` : "-";
+}
 
-        function animateNeural() {
-            ctx.clearRect(0, 0, width, height);
+function renderAtRisk() {
+  const panel = document.getElementById("at-risk-panel");
+  const list = document.getElementById("arp-list");
+  const atRisk = filteredStudents().filter(s => s.at_risk);
 
-            for(let i=0; i<nodes.length; i++) {
-                for(let j=i+1; j<nodes.length; j++) {
-                    const dx = nodes[i].x - nodes[j].x;
-                    const dy = nodes[i].y - nodes[j].y;
-                    const dist = Math.sqrt(dx*dx + dy*dy);
+  if (!atRisk.length) { panel.style.display = "none"; return; }
+  panel.style.display = "block";
 
-                    if(dist < 100) {
-                        ctx.beginPath();
-                        ctx.moveTo(nodes[i].x, nodes[i].y);
-                        ctx.lineTo(nodes[j].x, nodes[j].y);
-                        
-                        const opacity = (1 - dist/100) * 0.15;
-                        if(nodes[i].isTop || nodes[j].isTop) {
-                            ctx.strokeStyle = `rgba(0,242,255,${opacity * 1.5})`;
-                        } else if(nodes[i].student.risk || nodes[j].student.risk) {
-                            ctx.strokeStyle = `rgba(245,166,35,${opacity})`;
-                        } else {
-                            ctx.strokeStyle = `rgba(100,116,139,${opacity})`;
-                        }
-                        ctx.lineWidth = 1;
-                        ctx.stroke();
-                    }
-                }
-            }
+  list.innerHTML = atRisk.map(s => {
+    const initials = (s.first_name[0] || "") + (s.last_name[0] || "");
+    return `
+      <div class="arp-row">
+        <div class="arp-avatar">${esc(initials)}</div>
+        <span class="arp-name">${esc(s.first_name)} ${esc(s.last_name)}</span>
+        <span class="arp-class">${esc(s.class_code)}</span>
+        <span class="arp-score">${s.engagement}% engagement</span>
+      </div>
+    `;
+  }).join("");
+}
 
-            nodes.forEach(n => {
-                n.update();
-                n.draw();
-            });
+function renderStudents() {
+  const grid = document.getElementById("student-grid");
+  const sub = document.getElementById("students-sub");
+  const students = filteredStudents();
 
-            requestAnimationFrame(animateNeural);
-        }
+  sub.textContent = `${students.length} student${students.length !== 1 ? "s" : ""}`;
 
-        window.addEventListener('resize', initNeural);
-        initNeural();
-        animateNeural();
+  if (!students.length) {
+    grid.innerHTML = `<div class="empty-state">No students in the selected class.</div>`;
+    return;
+  }
+
+  grid.innerHTML = students.map((s, idx) => {
+    const isTop = s.is_top;
+    const cardCls = `student-card${isTop ? " top" : ""}${s.at_risk ? " at-risk" : ""}`;
+
+    const chips = [
+      ...s.quiz_results.map(q => `<span class="result-chip quiz ${grade(q.score)}" title="${esc(q.title)}">${esc(q.title.replace(/ Quiz$/i,"").substring(0,14))}: ${q.score}%</span>`),
+      ...s.sim_results.map(r => `<span class="result-chip sim ${grade(r.score)}" title="${esc(r.title)}">${esc(r.title.substring(0,14))}: ${r.score}%</span>`)
+    ].join("");
+
+    return `
+      <div class="${cardCls}" data-sid="${esc(s.student_id)}">
+        <div class="sc-header">
+          <div class="sc-identity">
+            <div class="sc-rank">#${s.rank}</div>
+            <div class="sc-name-block">
+              <span class="sc-name">${esc(s.first_name)} ${esc(s.last_name)}${isTop ? " 👑" : ""}</span>
+              <span class="sc-meta">${esc(s.class_code)} · Year ${s.year_level}</span>
+            </div>
+          </div>
+          <span class="sc-engage">${s.engagement}%</span>
+        </div>
+        <div class="sc-bars">
+          <div class="sc-bar-row"><span class="sc-bar-lbl">Progress</span><div class="sc-bar-track"><div class="sc-bar-fill blue" style="width:${s.module_progress_pct}%"></div></div><span class="sc-bar-val">${s.module_progress_pct}%</span></div>
+          <div class="sc-bar-row"><span class="sc-bar-lbl">Quizzes</span><div class="sc-bar-track"><div class="sc-bar-fill cyan" style="width:${s.avg_quiz_score}%"></div></div><span class="sc-bar-val">${s.avg_quiz_score > 0 ? s.avg_quiz_score+"%" : "-"}</span></div>
+          <div class="sc-bar-row"><span class="sc-bar-lbl">Sims</span><div class="sc-bar-track"><div class="sc-bar-fill purple" style="width:${s.avg_sim_score}%"></div></div><span class="sc-bar-val">${s.avg_sim_score > 0 ? s.avg_sim_score+"%" : "-"}</span></div>
+        </div>
+        ${chips ? `<div class="sc-results">${chips}</div>` : ""}
+      </div>
+    `;
+  }).join("");
+}
+
+function renderLessonProgress() {
+  const grid = document.getElementById("lesson-grid");
+  const sub = document.getElementById("progress-sub");
+  const modules = activeProfile.modules || [];
+
+  const active = modules.filter(m => m.status !== "Locked").length;
+  sub.textContent = `${active} of ${modules.length} lessons active`;
+
+  if (!modules.length) {
+    grid.innerHTML = `<div class="empty-state">No lessons found.</div>`;
+    return;
+  }
+
+  grid.innerHTML = modules.map(m => {
+    const key = m.status === "Completed" ? "completed" : m.status === "In Progress" ? "inprogress" : "locked";
+    const label = m.status === "Completed" ? "Completed" : m.status === "In Progress" ? "In Progress" : "Locked";
+    return `
+      <div class="lesson-card" data-lid="${esc(m.lesson_id)}">
+        <div class="lc-top">
+          <span class="lc-title">${esc(m.title)}</span>
+          <span class="lc-status ${key}">${label}</span>
+        </div>
+        <div class="lc-topic">${esc(m.topic || "")} · ${esc(m.difficulty || "")}</div>
+        <div class="lc-bar-row">
+          <div class="lc-bar-track"><div class="lc-bar-fill" style="width:${m.progress}%"></div></div>
+          <span class="lc-pct">${m.progress}%</span>
+        </div>
+      </div>
+    `;
+  }).join("");
+
+  grid.querySelectorAll(".lesson-card").forEach(card => {
+    card.addEventListener("click", () => showDrilldown(card.dataset.lid));
+  });
+}
+
+function showDrilldown(lessonId) {
+  const lesson = (activeProfile.modules || []).find(m => m.lesson_id === lessonId);
+  const students = filteredStudents();
+  const panel = document.getElementById("drilldown");
+  const title = document.getElementById("dd-title");
+  const body = document.getElementById("dd-body");
+
+  title.textContent = lesson ? `${lesson.title} - Student Breakdown` : "Student Breakdown";
+
+  body.innerHTML = students.map(s => {
+    const quizzes = s.quiz_results.filter(q => q.lesson_id === lessonId);
+    const sims = s.sim_results.filter(r => r.lesson_id === lessonId);
+    const rows = [
+      ...quizzes.map(q => `<div class="dd-row"><span class="dd-label">📝 ${esc(q.title)}</span><span class="dd-val ${grade(q.score)}">${q.score}%</span></div>`),
+      ...sims.map(r => `<div class="dd-row"><span class="dd-label">🖥 ${esc(r.title)}</span><span class="dd-val ${grade(r.score)}">${r.score}%</span></div>`)
+    ];
+    return `
+      <div class="dd-student">
+        <div class="dd-name">${esc(s.first_name)} ${esc(s.last_name)}</div>
+        ${rows.length ? rows.join("") : `<div class="dd-row"><span class="dd-label" style="color:var(--text-muted)">No results yet</span></div>`}
+      </div>
+    `;
+  }).join("");
+
+  panel.style.display = "block";
+  panel.scrollIntoView({ behavior:"smooth", block:"nearest" });
+}
+
+function renderAnnouncements() {
+  const feed = document.getElementById("ann-feed");
+  const anns = activeProfile.announcements || [];
+
+  if (!anns.length) {
+    feed.innerHTML = `<div class="ann-empty">No announcements yet. Post one to your students!</div>`;
+    return;
+  }
+
+  feed.innerHTML = anns.map(a => `
+    <div class="ann-card">
+      <div class="ann-icon">${ICON_ANNOUNCE}</div>
+      <div class="ann-content">
+        <div class="ann-title">${esc(a.title)}</div>
+        <div class="ann-msg">${esc(a.message)}</div>
+        <div class="ann-date">${esc(a.created_at)}</div>
+      </div>
+    </div>
+  `).join("");
+}
+
+function bindAnnouncementForm() {
+  document.getElementById("ann-post-btn").addEventListener("click", () => {
+    const titleEl = document.getElementById("ann-title-in");
+    const msgEl = document.getElementById("ann-msg-in");
+    const note = document.getElementById("ann-feedback");
+    const title = titleEl.value.trim();
+    const message = msgEl.value.trim();
+
+    if (!title || !message) {
+      note.style.color = "var(--error)";
+      note.textContent = "Please fill in both fields.";
+      return;
+    }
+
+    const now = new Date();
+    const dateStr = `${now.getDate().toString().padStart(2,"0")}/${(now.getMonth()+1).toString().padStart(2,"0")}/${now.getFullYear()}`;
+    activeProfile.announcements.unshift({
+      notification_id: "TEMP",
+      teacher_id: activeProfile.teacher_id,
+      title, message,
+      created_at: dateStr,
+    });
+    renderAnnouncements();
+    titleEl.value = "";
+    msgEl.value = "";
+    note.style.color = "var(--green)";
+    note.textContent = "Announcement posted!";
+    setTimeout(() => { note.textContent = ""; }, 3000);
+  });
+}
+
+function startRadar() {
+  const canvas = document.getElementById("radar-canvas");
+  if (!canvas) return;
+  const ctx = canvas.getContext("2d");
+  let sweep = 0;
+
+  const students = (activeProfile.students || []).slice(0, 12);
+  const blips = students.map((s, i) => ({
+    r: 18 + ((s.engagement / 100) * 72),
+    angle: (i / Math.max(students.length,1)) * Math.PI * 2,
+    color: s.at_risk ? "#f59e0b" : (i === 0 ? "#10b981" : "#00f2ff"),
+    size: s.at_risk ? 5 : (i === 0 ? 6 : 3.5),
+  }));
+
+  function draw() {
+    const W = canvas.width, H = canvas.height, cx = W/2, cy = H/2, R = 90;
+    ctx.clearRect(0,0,W,H);
+
+    for (let r = 22; r <= R; r += 22) {
+      ctx.beginPath();
+      ctx.arc(cx, cy, r, 0, Math.PI*2);
+      ctx.strokeStyle = `rgba(0,242,255,${0.04 + r/1800})`;
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    }
+
+    ctx.beginPath();
+    ctx.moveTo(cx-R, cy); ctx.lineTo(cx+R, cy);
+    ctx.moveTo(cx, cy-R); ctx.lineTo(cx, cy+R);
+    ctx.strokeStyle = "rgba(255,255,255,0.03)";
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.arc(cx, cy, R, sweep, sweep - 0.45, true);
+    ctx.closePath();
+    const grad = ctx.createRadialGradient(cx, cy, 8, cx, cy, R);
+    grad.addColorStop(0, "rgba(0,242,255,0.18)");
+    grad.addColorStop(1, "rgba(0,242,255,0.0)");
+    ctx.fillStyle = grad;
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(cx + R*Math.cos(sweep), cy + R*Math.sin(sweep));
+    ctx.strokeStyle = "rgba(0,242,255,0.5)";
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    blips.forEach(b => {
+      const diff = (sweep - b.angle + Math.PI*2) % (Math.PI*2);
+      const alpha = diff < 1.6 ? Math.max(1 - diff/1.6, 0.18) : 0.18;
+      const bx = cx + b.r*Math.cos(b.angle), by = cy + b.r*Math.sin(b.angle);
+      ctx.beginPath();
+      ctx.arc(bx, by, b.size, 0, Math.PI*2);
+      ctx.fillStyle = b.color;
+      ctx.shadowBlur = 12;
+      ctx.shadowColor = b.color;
+      ctx.globalAlpha = alpha;
+      ctx.fill();
+      ctx.shadowBlur = 0;
+      ctx.globalAlpha = 1;
+    });
+
+    const pulse = Math.sin(Date.now()*0.003)*1.2;
+    ctx.beginPath();
+    ctx.arc(cx, cy, 5+pulse, 0, Math.PI*2);
+    ctx.fillStyle = "#00f2ff";
+    ctx.shadowBlur = 16;
+    ctx.shadowColor = "#00f2ff";
+    ctx.fill();
+    ctx.shadowBlur = 0;
+
+    sweep = (sweep + 0.015) % (Math.PI*2);
+    radarRAF = requestAnimationFrame(draw);
+  }
+
+  if (radarRAF) cancelAnimationFrame(radarRAF);
+  draw();
+}
+
+function initBgCanvas() {
+  const canvas = document.getElementById("bg-canvas");
+  const ctx = canvas.getContext("2d");
+  let W, H;
+  const particles = [];
+
+  function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+  window.addEventListener("resize", resize);
+  resize();
+
+  for (let i = 0; i < 55; i++) {
+    particles.push({
+      x: Math.random()*1400, y: Math.random()*900,
+      char: Math.random() > 0.5 ? "0" : "1",
+      speed: 0.12 + Math.random()*0.3,
+      alpha: 0.03 + Math.random()*0.07,
+    });
+  }
+
+  (function draw() {
+    ctx.clearRect(0,0,W,H);
+    ctx.font = "700 10px 'JetBrains Mono', monospace";
+    ctx.textAlign = "center";
+    particles.forEach(p => {
+      ctx.fillStyle = `rgba(0,242,255,${p.alpha})`;
+      ctx.fillText(p.char, p.x, p.y);
+      p.y += p.speed;
+      if (p.y > H+20) { p.y = -10; p.x = Math.random()*W; }
+    });
+    requestAnimationFrame(draw);
+  })();
+}
+
+function grade(score) {
+  if (score === null || score === undefined) return "none";
+  if (score >= 80) return "good";
+  if (score >= 60) return "mid";
+  return "low";
+}
+
+function esc(str) {
+  return String(str ?? "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+}
+function initBgCanvas() {
+  const canvas = document.getElementById("bg-canvas");
+  const ctx    = canvas.getContext("2d");
+  let W, H;
+
+  const CHARS = ["0", "1"];
+  const COL   = "rgba(0,242,255,";
+  const particles = [];
+
+  function resize() {
+    W = canvas.width  = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+  window.addEventListener("resize", resize);
+  resize();
+
+  for (let i = 0; i < 120; i++) {
+    particles.push({
+      x:     Math.random() * 1400,
+      y:     Math.random() * 900,
+      char:  CHARS[Math.floor(Math.random() * 2)],
+      speed: 0.15 + Math.random() * 0.35,
+      size:  24 + Math.random() * 32,
+      alpha: 0.04 + Math.random() * 0.1,
+    });
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    ctx.font = "700 11px 'JetBrains Mono', monospace";
+    ctx.textAlign = "center";
+
+    particles.forEach(p => {
+      ctx.fillStyle = COL + p.alpha + ")";
+      ctx.fillText(p.char, p.x, p.y);
+      p.y += p.speed;
+      if (p.y > H + 20) { p.y = -10; p.x = Math.random() * W; }
+    });
+
+    requestAnimationFrame(draw);
+  }
+  draw();
+}

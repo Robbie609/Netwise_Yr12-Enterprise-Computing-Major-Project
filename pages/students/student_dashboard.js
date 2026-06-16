@@ -97,7 +97,7 @@ function bindNavEvents() {
   const dropdown = document.getElementById("profile-dropdown");
   const logoutBtn= document.getElementById("logout-btn");
 
-  toggle.addEventListener("click", e => { e.stopPropagation(); dropdown.classList.toggle("active"); });
+  if(toggle){toggle.addEventListener("click", e => { e.stopPropagation(); dropdown.classList.toggle("active"); });}
   document.addEventListener("click", e => {
     if (!dropdown.contains(e.target) && e.target !== toggle) dropdown.classList.remove("active");
   });

@@ -28,18 +28,20 @@
 <!-- MAIN DASHBOARD -->
 <div id="dashboard-view">
 
-  <!-- NAVBAR -->
+<!-- NAVBAR -->
   <nav class="navbar">
     <div class="nav-left">
       <div class="logo">
-        <img src="assets\images\Logo1.png" style="width:20%; height:20%;">
+      <!-- Removed inline percentage styles -->
+        <img src="C:\Users\2rm2j\Documents\Enterprise\Project\Netwiser_Yr12-Enterprise-Computing-Major-Project\assets\images\Logo1.png" alt="Netwiser Logo">
       </div>
-      <div class="nav-links">
-        <a href="#overview" class="nav-item active" data-section="overview">Overview</a>
-        <a href="#lessons" class="nav-item" data-section="lessons">Lessons</a>
-        <a href="#results" class="nav-item" data-section="results">Results</a>
-        <a href="#achievements" class="nav-item" data-section="achievements">Achievements</a>
-      </div>
+    </div> <!-- Moved this tag up to close nav-left here -->
+
+    <div class="nav-links">
+      <a href="#overview" class="nav-item active" data-section="overview">Overview</a>
+      <a href="#lessons" class="nav-item" data-section="lessons">Lessons</a>
+      <a href="#results" class="nav-item" data-section="results">Results</a>
+      <a href="achievments/achievments.html" class="nav-item">Achievements</a>
     </div>
     <div class="profile-container">
       <button class="nav-utility-btn" id="profile-toggle" aria-label="Profile menu">
