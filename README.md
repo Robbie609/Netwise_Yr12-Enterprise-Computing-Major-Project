@@ -1,6 +1,6 @@
 # NETWISER
 
-NetWiser is a desktop application developed as part of a Year 12 Software Design and Development project. It is designed to improve cybersecurity education for Year 6–8 students by providing an interactive platform for learning cyber safety concepts through lessons, quizzes, simulations, achievements, and progress tracking.
+NetWiser is a desktop application developed as part of a Year 12 Software Design and Development project. It is designed to improve cybersecurity education for Year 6 - 8 students by providing an interactive platform for learning cyber safety concepts through lessons, quizzes, simulations, achievements, and progress tracking.
 
 ## 📌 Project Overview
 

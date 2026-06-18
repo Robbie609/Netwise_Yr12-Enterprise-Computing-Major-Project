@@ -622,11 +622,6 @@ def get_feedback_by_lesson_id(lesson_id):
 # DASHBOARD DATA RETRIEVAL - STUDENT
 # 
 def get_student_dashboard_data(user_id):
-    """
-    Builds the full payload required by the Student Dashboard for the
-    student linked to the given user_id. Returns None if the user_id
-    does not correspond to a student.
-    """
     student = get_student_by_user_id(user_id)
     if not student:
         return None
@@ -1099,11 +1094,6 @@ def set_module_progress(student_id, module_id, status):
 # QUIZ RESULTS - WRITE
 # 
 def submit_quiz_result(student_id, quiz_id, score):
-    """
-    Records a new quiz attempt. Each submission is stored as its own row
-    so historical attempts are preserved; dashboards use the most recent
-    or best score via get_quiz_results_by_student_id.
-    """
     conn = get_connection()
     cursor = conn.cursor()
 
@@ -1122,10 +1112,6 @@ def submit_quiz_result(student_id, quiz_id, score):
 
 
 def grade_quiz_submission(quiz_id, answers):
-    """
-    answers: dict mapping question_id -> selected option letter ("a"/"b"/"c"/"d").
-    Returns (score_percent, total_questions, correct_count, per_question_results).
-    """
     questions = get_questions_by_quiz_id(quiz_id)
     total = len(questions)
 
