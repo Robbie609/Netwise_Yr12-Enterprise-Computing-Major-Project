@@ -1,5 +1,5 @@
 /* ==========================================================================
-   laptop.js — NetwiserOS Window Manager & Kernel
+   laptop.js - NetwiserOS Window Manager & Kernel
    Boots the simulator, authenticates the session, and exposes a small
    OS API (window.OS) that app modules (apps/*.js) register against.
    ========================================================================== */

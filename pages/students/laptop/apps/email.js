@@ -1,4 +1,4 @@
-/* Email Client — phishing-detection inbox wired to WORLD.mailbox. */
+/* Email Client - phishing-detection inbox wired to WORLD.mailbox. */
 OS.registerApp("email", {
   label: "Mail",
   icon: "email",
@@ -75,11 +75,11 @@ OS.registerApp("email", {
       bodyEl.querySelector(".email-report-btn").addEventListener("click", () => {
         m.reported = true;
         if (m.isPhishing) {
-          feedbackEl.innerHTML = `<span style="color:var(--cyan)">✓ Correct — this was a phishing attempt. Reporting it helps protect others.</span>`;
+          feedbackEl.innerHTML = `<span style="color:var(--cyan)">✓ Correct - this was a phishing attempt. Reporting it helps protect others.</span>`;
           ctx.notify("Mail", "Phishing reported correctly.");
         } else {
-          feedbackEl.innerHTML = `<span style="color:var(--amber)">This email was actually legitimate. Reporting safe mail as phishing can cause real messages to be missed — double check sender domains and urgency cues first.</span>`;
-          ctx.notify("Mail", "That email looks legitimate — reported in error.");
+          feedbackEl.innerHTML = `<span style="color:var(--amber)">This email was actually legitimate. Reporting safe mail as phishing can cause real messages to be missed - double check sender domains and urgency cues first.</span>`;
+          ctx.notify("Mail", "That email looks legitimate - reported in error.");
         }
         openMail(id);
       });
@@ -87,11 +87,11 @@ OS.registerApp("email", {
       bodyEl.querySelector(".email-safe-btn").addEventListener("click", () => {
         m.markedSafe = true;
         if (!m.isPhishing) {
-          feedbackEl.innerHTML = `<span style="color:var(--cyan)">✓ Correct — this email is legitimate.</span>`;
+          feedbackEl.innerHTML = `<span style="color:var(--cyan)">✓ Correct - this email is legitimate.</span>`;
           ctx.notify("Mail", "Marked safe correctly.");
         } else {
           feedbackEl.innerHTML = `<span style="color:var(--error-red)">⚠ This is actually a phishing email. Look for mismatched sender domains, urgency language, and suspicious links before trusting a message.</span>`;
-          ctx.notify("Mail", "Careful — that email was phishing.");
+          ctx.notify("Mail", "Careful - that email was phishing.");
         }
         openMail(id);
       });

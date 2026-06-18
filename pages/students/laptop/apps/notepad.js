@@ -1,4 +1,4 @@
-/* Notepad — persists to WORLD so notes survive close/reopen within the session. */
+/* Notepad - persists to WORLD so notes survive close/reopen within the session. */
 OS.registerApp("notepad", {
   label: "Notes",
   icon: "notepad",

@@ -1,4 +1,4 @@
-/* Security Scanner — walks WORLD's filesystem for flagged threats. */
+/* Security Scanner - walks WORLD's filesystem for flagged threats. */
 OS.registerApp("scanner", {
   label: "Security Scanner",
   icon: "scanner",
@@ -45,7 +45,7 @@ OS.registerApp("scanner", {
         walk(WORLD.fs, "", threats);
         threats.forEach(t => WORLD.scanFile(t.path));
         renderResults(threats);
-        ctx.notify("Security Scanner", threats.length ? `${threats.length} threat(s) found.` : "Scan complete — no threats found.");
+        ctx.notify("Security Scanner", threats.length ? `${threats.length} threat(s) found.` : "Scan complete - no threats found.");
       }, 1100);
     }
 

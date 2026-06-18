@@ -1,5 +1,5 @@
 /* ==========================================================================
-   world.js — NetwiserOS shared sandbox state
+   world.js - NetwiserOS shared sandbox state
    A single in-memory "world" that Terminal, Files, Browser, Mail and
    Notepad all read from and write to, so actions in one app are visible
    and consequential in the others. Resets each boot (open sandbox, no
@@ -28,7 +28,7 @@ const WORLD = (() => {
           "passwords.txt": {
             type: "file", kind: "text",
             content:
-`# personal vault — DO NOT SHARE
+`# personal vault - DO NOT SHARE
 school_portal: Spr1ng2024!
 email: correct-horse-battery-staple
 router_admin: admin123
@@ -66,7 +66,7 @@ Netwiser IT Support`,
           },
           "malware-sample.exe": {
             type: "file", kind: "exe",
-            content: "[binary executable — 412 KB]",
+            content: "[binary executable - 412 KB]",
             tags: ["malware"], scanned: false,
             threatName: "Trojan.GenKryptor.882",
           },
@@ -78,7 +78,7 @@ Netwiser IT Support`,
         children: {
           "invoice_4471.pdf.exe": {
             type: "file", kind: "exe",
-            content: "[binary executable — 88 KB, disguised as PDF]",
+            content: "[binary executable - 88 KB, disguised as PDF]",
             tags: ["malware"], scanned: false,
             threatName: "Worm.Disguise.PDFSpoof",
           },
@@ -141,7 +141,7 @@ Netwiser IT Support`,
   }
 
   /* ---------------------------------------------------------------------
-     SCAN ENGINE — used by Terminal `scan`, Files "Scan", and Scanner app
+     SCAN ENGINE - used by Terminal `scan`, Files "Scan", and Scanner app
      --------------------------------------------------------------------- */
   function scanFile(path) {
     const file = getFile(path);
@@ -169,7 +169,7 @@ Netwiser IT Support`,
   }
 
   /* ---------------------------------------------------------------------
-     WHOIS / DOMAIN INTEL — used by Terminal `whois` and `ping`
+     WHOIS / DOMAIN INTEL - used by Terminal `whois` and `ping`
      --------------------------------------------------------------------- */
   const domainIntel = {
     "netwiser.local": { registrar: "Netwiser Internal Registry", created: "2019-01-01", reputation: "trusted", ip: "10.0.0.1" },
@@ -183,7 +183,7 @@ Netwiser IT Support`,
     domain = domain.replace(/^https?:\/\//, "").split("/")[0].toLowerCase();
     const info = domainIntel[domain];
     if (!info) {
-      return `No record found for ${domain}.\nThis domain is not in the Netwiser threat-intel database — treat unknown domains with caution.`;
+      return `No record found for ${domain}.\nThis domain is not in the Netwiser threat-intel database - treat unknown domains with caution.`;
     }
     let out = `Domain: ${domain}\nRegistrar: ${info.registrar}\nCreated: ${info.created}\nIP: ${info.ip}\nReputation: ${info.reputation.toUpperCase()}`;
     if (info.notes) out += `\nNotes: ${info.notes}`;
@@ -195,14 +195,14 @@ Netwiser IT Support`,
     const info = domainIntel[domain];
     const ip = info?.ip || "0.0.0.0";
     if (!info) {
-      return `Pinging ${host} [${ip}] with 32 bytes of data:\nRequest timed out.\nRequest timed out.\n(Unknown host — not resolvable in the sandbox network.)`;
+      return `Pinging ${host} [${ip}] with 32 bytes of data:\nRequest timed out.\nRequest timed out.\n(Unknown host - not resolvable in the sandbox network.)`;
     }
     const lines = [1,2,3,4].map(i => `Reply from ${ip}: bytes=32 time=${(8+i*3)}ms TTL=57`);
     return `Pinging ${host} [${ip}] with 32 bytes of data:\n${lines.join("\n")}\n\nPing statistics for ${ip}:\n    Packets: Sent = 4, Received = 4, Lost = 0 (0% loss)`;
   }
 
   /* ---------------------------------------------------------------------
-     BROWSER SITES — simple key:URL -> rendered page model
+     BROWSER SITES - simple key:URL -> rendered page model
      --------------------------------------------------------------------- */
   const sites = {
     "netwiser.local/home": {
@@ -219,7 +219,7 @@ Netwiser IT Support`,
           <input placeholder="Username" style="width:100%;margin-top:1rem;padding:0.6rem;border:1px solid #ccc;border-radius:5px"/>
           <input placeholder="Password" type="password" style="width:100%;margin-top:0.6rem;padding:0.6rem;border:1px solid #ccc;border-radius:5px"/>
           <button style="width:100%;margin-top:1rem;padding:0.7rem;background:#e63946;color:#fff;border:none;border-radius:5px;font-weight:700;cursor:pointer">Verify Now</button>
-          <p style="font-size:0.68rem;color:#999;margin-top:1rem">This page is a simulated phishing site for training purposes — no real data is collected.</p>
+          <p style="font-size:0.68rem;color:#999;margin-top:1rem">This page is a simulated phishing site for training purposes - no real data is collected.</p>
         </div>`,
     },
     "totally-not-a-scam.biz": {
@@ -229,7 +229,7 @@ Netwiser IT Support`,
           <div style="font-size:1.4rem;font-weight:900">🎉 YOU WON A $500 GIFT CARD! 🎉</div>
           <p style="margin-top:1rem;font-size:0.9rem">Congratulations visitor #999,999! Click below before your prize expires in 0:59!</p>
           <button style="margin-top:1rem;padding:0.8rem 1.4rem;background:#0f0;color:#000;border:none;border-radius:6px;font-weight:800;cursor:pointer">CLAIM NOW</button>
-          <p style="font-size:0.65rem;color:#888;margin-top:1.5rem">Simulated scam page — for training purposes only.</p>
+          <p style="font-size:0.65rem;color:#888;margin-top:1.5rem">Simulated scam page - for training purposes only.</p>
         </div>`,
     },
     "googlle.com": {
@@ -238,7 +238,7 @@ Netwiser IT Support`,
         <div style="max-width:500px;margin:3rem auto;text-align:center;font-family:Arial,sans-serif">
           <div style="font-size:2.2rem;font-weight:700;color:#4285F4">G<span style="color:#EA4335">o</span><span style="color:#FBBC05">o</span><span style="color:#4285F4">g</span><span style="color:#34A853">l</span><span style="color:#EA4335">l</span><span style="color:#4285F4">e</span></div>
           <input style="width:80%;margin-top:1.5rem;padding:0.7rem 1rem;border-radius:24px;border:1px solid #ccc"/>
-          <p style="font-size:0.65rem;color:#999;margin-top:2rem">Note the misspelled domain (googlle.com) and missing security certificate — a classic typosquat.</p>
+          <p style="font-size:0.65rem;color:#999;margin-top:2rem">Note the misspelled domain (googlle.com) and missing security certificate - a classic typosquat.</p>
         </div>`,
     },
     "schoolnews.netwiser.edu": {
@@ -257,7 +257,7 @@ Netwiser IT Support`,
   }
 
   /* ---------------------------------------------------------------------
-     MAILBOX — shared, mutable inbox
+     MAILBOX - shared, mutable inbox
      --------------------------------------------------------------------- */
   const mailbox = [
     {
@@ -279,7 +279,7 @@ Netwiser IT Support`,
       fromDomain: "class.netwiser.edu",
       subject: "Group project notes",
       date: "9:02 AM",
-      body: `Hey! Attaching my half of the slides for tomorrow. Let me know if the intro section needs trimming.\n\n— Rowan`,
+      body: `Hey! Attaching my half of the slides for tomorrow. Let me know if the intro section needs trimming.\n\n- Rowan`,
       isPhishing: false,
       reported: false,
       markedSafe: false,
@@ -314,7 +314,7 @@ Netwiser IT Support`,
   ];
 
   /* ---------------------------------------------------------------------
-     NOTES — persisted across notepad open/close within the session
+     NOTES - persisted across notepad open/close within the session
      --------------------------------------------------------------------- */
   let notesContent = `Cybersecurity Notes
 • Always verify the source
@@ -327,7 +327,7 @@ Netwiser IT Support`,
   function setNotes(text) { notesContent = text; }
 
   /* ---------------------------------------------------------------------
-     SIMPLE SCORE / EVENT LOG — lets apps react to player actions
+     SIMPLE SCORE / EVENT LOG - lets apps react to player actions
      --------------------------------------------------------------------- */
   const log = [];
   function record(event) { log.push({ event, time: new Date() }); }

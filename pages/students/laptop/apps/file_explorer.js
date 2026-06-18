@@ -1,4 +1,4 @@
-/* File Explorer — browses WORLD's virtual filesystem; open/scan/quarantine files. */
+/* File Explorer - browses WORLD's virtual filesystem; open/scan/quarantine files. */
 OS.registerApp("files", {
   label: "File Explorer",
   icon: "files",
@@ -97,7 +97,7 @@ OS.registerApp("files", {
         <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:1rem;text-align:center">
           <div style="font-size:2rem">⚠️</div>
           <div style="font-size:0.85rem;font-weight:700;color:#fff">${OS.esc(name)}</div>
-          <div style="font-size:0.74rem;color:var(--text-muted);max-width:300px">Executable file. ${file.scanned ? (file.tags?.includes('malware') ? `Previously scanned — flagged as <span style="color:var(--error-red)">${OS.esc(file.threatName)}</span>.` : "Previously scanned — no threats found.") : "Not yet scanned."}</div>
+          <div style="font-size:0.74rem;color:var(--text-muted);max-width:300px">Executable file. ${file.scanned ? (file.tags?.includes('malware') ? `Previously scanned - flagged as <span style="color:var(--error-red)">${OS.esc(file.threatName)}</span>.` : "Previously scanned - no threats found.") : "Not yet scanned."}</div>
           <div style="display:flex;gap:0.5rem">
             <button class="app-toolbar-btn fe-scan-btn" style="width:auto;padding:0 1rem">Run Scan</button>
             ${file.scanned && file.tags?.includes("malware") ? `<button class="app-toolbar-btn fe-quarantine-btn" style="width:auto;padding:0 1rem;color:var(--error-red);border-color:var(--error-red)">Quarantine</button>` : ""}

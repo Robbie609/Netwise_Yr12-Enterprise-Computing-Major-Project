@@ -187,13 +187,13 @@ function renderTable() {
             <td>
               <div class="td-bar-cell">
                 <div class="td-bar-track"><div class="td-bar-fill cyan" style="width:${s.avg_quiz_score}%"></div></div>
-                <span class="td-bar-val">${s.avg_quiz_score > 0 ? s.avg_quiz_score+"%" : "—"}</span>
+                <span class="td-bar-val">${s.avg_quiz_score > 0 ? s.avg_quiz_score+"%" : "-"}</span>
               </div>
             </td>
             <td>
               <div class="td-bar-cell">
                 <div class="td-bar-track"><div class="td-bar-fill purple" style="width:${s.avg_sim_score}%"></div></div>
-                <span class="td-bar-val">${s.avg_sim_score > 0 ? s.avg_sim_score+"%" : "—"}</span>
+                <span class="td-bar-val">${s.avg_sim_score > 0 ? s.avg_sim_score+"%" : "-"}</span>
               </div>
             </td>
             <td>
@@ -218,7 +218,7 @@ function showDrilldown(studentId) {
   const title = document.getElementById("dd-title");
   const body  = document.getElementById("dd-body");
 
-  title.textContent = `${s.first_name} ${s.last_name} — Detail`;
+  title.textContent = `${s.first_name} ${s.last_name} - Detail`;
 
   const quizRows = s.quiz_results.length
     ? s.quiz_results.map(q => `<div class="dd-row"><span class="dd-label">📝 ${esc(q.title)}</span><span class="dd-val ${grade(q.score)}">${q.score}%</span></div>`).join("")

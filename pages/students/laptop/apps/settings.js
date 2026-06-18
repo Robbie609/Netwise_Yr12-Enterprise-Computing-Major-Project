@@ -1,4 +1,4 @@
-/* Settings — account info plus interactive security toggles. */
+/* Settings - account info plus interactive security toggles. */
 OS.registerApp("settings", {
   label: "Settings",
   icon: "settings",
@@ -30,7 +30,7 @@ OS.registerApp("settings", {
           <div>
             <div style="font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:var(--text-muted);margin-bottom:0.6rem">Account</div>
             <div style="display:flex;flex-direction:column;gap:0.4rem">
-              ${[`Name: ${p.first_name} ${p.last_name}`, `Class: ${p.class_code || "—"}`, `Year level: ${p.year_level || "—"}`].map(i => `<div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.05);border-radius:8px;padding:0.6rem 0.85rem;font-size:0.78rem;color:var(--text-sub)">${OS.esc(i)}</div>`).join("")}
+              ${[`Name: ${p.first_name} ${p.last_name}`, `Class: ${p.class_code || "-"}`, `Year level: ${p.year_level || "-"}`].map(i => `<div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.05);border-radius:8px;padding:0.6rem 0.85rem;font-size:0.78rem;color:var(--text-sub)">${OS.esc(i)}</div>`).join("")}
             </div>
           </div>
           <div>

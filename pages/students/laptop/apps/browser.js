@@ -1,4 +1,4 @@
-/* Browser — address-bar navigation across WORLD's sandboxed sites, plus a real homepage. */
+/* Browser - address-bar navigation across WORLD's sandboxed sites, plus a real homepage. */
 OS.registerApp("browser", {
   label: "SecureWeb Browser",
   icon: "browser",
@@ -99,7 +99,7 @@ OS.registerApp("browser", {
       pageEl.querySelectorAll(".bw-tile").forEach(t => {
         t.addEventListener("mouseenter", () => t.style.background = "rgba(255,255,255,0.07)");
         t.addEventListener("mouseleave", () => t.style.background = "rgba(255,255,255,0.03)");
-        t.addEventListener("click", () => ctx.notify("Netwiser", "This section lives outside the laptop simulator — head back to the dashboard to explore it."));
+        t.addEventListener("click", () => ctx.notify("Netwiser", "This section lives outside the laptop simulator - head back to the dashboard to explore it."));
       });
     }
 
