@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Netwiser | Module</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="student_dashboard.css">
+<link rel="stylesheet" href="learn.css">
+</head>
+<body>
+
+<canvas id="bg-canvas"></canvas>
+
+<div id="loading-view">
+  <div class="loading-inner">
+    <svg class="loading-shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-4z"/><path d="M9 12l2 2 4-4"/></svg>
+    <span class="loading-label">Loading module…</span>
+  </div>
+</div>
+
+<div id="error-view" style="display:none">
+  <div class="error-inner">
+    <svg viewBox="0 0 24 24" fill="none" stroke="var(--error-red)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="40" height="40"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+    <p id="error-message">Something went wrong loading this module.</p>
+    <button class="btn-retry" id="retry-btn">Retry</button>
+  </div>
+</div>
+
+<div id="dashboard-view">
+  <nav class="navbar">
+    <div class="nav-left">
+      <div class="logo">
+        <svg class="logo-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-4z"/><path d="M9 12l2 2 4-4"/></svg>
+        <span>NETWISER</span>
+      </div>
+      <div class="nav-links">
+        <a href="student_dashboard.html" class="nav-item">Overview</a>
+        <a href="lessons.html" class="nav-item active">Lessons</a>
+        <a href="student_dashboard.html#results" class="nav-item">Results</a>
+        <a href="student_dashboard.html#achievements" class="nav-item">Achievements</a>
+      </div>
+    </div>
+    <div class="profile-container">
+      <button class="nav-utility-btn" id="profile-toggle">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      </button>
+      <div class="profile-dropdown" id="profile-dropdown">
+        <div class="profile-name" id="profile-name">—</div>
+        <div class="profile-email" id="profile-email">—</div>
+        <div class="dropdown-divider"></div>
+        <a href="#" class="dropdown-item" id="logout-btn">Sign Out</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="dashboard-container learn-container">
+    <a href="lessons.html" class="back-link" id="back-link">&larr; Back to Lessons</a>
+
+    <div class="learn-card">
+      <div class="learn-head">
+        <span class="learn-eyebrow" id="module-position">MODULE</span>
+        <h1 class="learn-title" id="module-title">—</h1>
+        <p class="learn-lesson-context" id="lesson-context">—</p>
+      </div>
+
+      <div class="learn-body">
+        <p class="learn-desc" id="lesson-desc">—</p>
+      </div>
+
+      <div class="learn-module-nav" id="module-nav"></div>
+
+      <div class="learn-actions">
+        <span class="status-badge" id="status-badge">—</span>
+        <button class="btn-primary-action" id="complete-btn">Mark Complete</button>
+      </div>
+
+      <p class="achievement-toast" id="achievement-toast" style="display:none"></p>
+    </div>
+  </main>
+</div>
+
+<script src="module.js"></script>
+</body>
+</html>

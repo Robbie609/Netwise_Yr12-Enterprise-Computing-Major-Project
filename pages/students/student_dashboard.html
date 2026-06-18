@@ -10,10 +10,8 @@
 <link rel="stylesheet" href="student_dashboard.css">
 </head>
 <body>
-
 <canvas id="bg-canvas"></canvas>
 <div class="bg-overlay"></div>
-
 <!-- LOADING SCREEN -->
 <div id="loading-view">
   <div class="loading-inner">
@@ -24,10 +22,8 @@
     <span class="loading-label">Authenticating session…</span>
   </div>
 </div>
-
 <!-- MAIN DASHBOARD -->
 <div id="dashboard-view">
-
 <!-- NAVBAR -->
   <nav class="navbar">
     <div class="nav-left">
@@ -36,10 +32,9 @@
         <img src="C:\Users\2rm2j\Documents\Enterprise\Project\Netwiser_Yr12-Enterprise-Computing-Major-Project\assets\images\Logo1.png" alt="Netwiser Logo">
       </div>
     </div> <!-- Moved this tag up to close nav-left here -->
-
     <div class="nav-links">
       <a href="#overview" class="nav-item active" data-section="overview">Overview</a>
-      <a href="#lessons" class="nav-item" data-section="lessons">Lessons</a>
+      <a href="lessons.html" class="nav-item">Lessons</a>
       <a href="#results" class="nav-item" data-section="results">Results</a>
       <a href="achievments/achievments.html" class="nav-item">Achievements</a>
     </div>
@@ -62,12 +57,9 @@
       </div>
     </div>
   </nav>
-
   <main class="dashboard-container">
-
     <!-- ═══ SECTION: OVERVIEW ═══ -->
     <section id="overview">
-
       <!-- HERO BANNER -->
       <div class="hero-section">
         <div class="hero-left">
@@ -124,7 +116,6 @@
 <br>
       <!-- BENTO ROW 1: Performance + Announcements -->
       <div class="bento-grid two-col">
-
         <!-- PERFORMANCE -->
         <div class="bento-card card-glow-blue">
           <div class="card-header">
@@ -149,7 +140,6 @@
             </div>
           </div>
         </div>
-
         <!-- ANNOUNCEMENTS -->
         <div class="bento-card card-glow-blue">
           <div class="card-header">
@@ -158,12 +148,10 @@
           </div>
           <div class="scrollable-card-body" id="announcements-list"></div>
         </div>
-
       </div>
 <br>
       <!-- BENTO ROW 2: Achievements + Active Lesson Preview -->
       <div class="bento-grid two-col">
-
         <!-- ACHIEVEMENTS -->
         <div class="bento-card card-glow-cyan" id="achievements">
           <div class="card-header">
@@ -172,7 +160,6 @@
           </div>
           <div class="scrollable-card-body" id="achievements-list"></div>
         </div>
-
         <!-- ACTIVE LESSON PREVIEW -->
         <div class="bento-card preview-viewport-card card-glow-blue" id="preview-card">
           <div class="preview-eyebrow">
@@ -188,11 +175,8 @@
           </div>
           <div class="preview-scores" id="preview-scores"></div>
         </div>
-
       </div>
-
     </section>
-
     <!-- ═══ SECTION: LESSON ROADMAP ═══ -->
     <section id="lessons" class="roadmap-wrapper">
       <div class="section-header-row">
@@ -203,7 +187,6 @@
         <div class="vertical-tree" id="roadmap-tree"></div>
       </div>
     </section>
-
     <!-- ═══ SECTION: QUIZ & SIMULATION RESULTS ═══ -->
     <section id="results">
       <div class="section-header-row">
@@ -211,10 +194,8 @@
       </div>
       <div class="results-grid" id="results-grid"></div>
     </section>
-
   </main>
 </div>
-
 <!-- AI ASSISTANT -->
 <div class="ai-fixed-anchor-pane">
   <div class="ai-window-box" id="ai-window">
@@ -239,7 +220,9 @@
     Nexis
   </button>
 </div>
-
+<footer style="text-align: center; background-color: #808080; padding: 20px 0; color: #ffffff; font-family: sans-serif;">
+  Made by Rowan Robin
+</footer>
 <script src="student_dashboard.js"></script>
 </body>
 </html>

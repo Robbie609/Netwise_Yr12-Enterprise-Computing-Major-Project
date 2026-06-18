@@ -236,7 +236,6 @@ function renderStudents() {
           <div class="sc-bar-row"><span class="sc-bar-lbl">Quizzes</span><div class="sc-bar-track"><div class="sc-bar-fill cyan" style="width:${s.avg_quiz_score}%"></div></div><span class="sc-bar-val">${s.avg_quiz_score > 0 ? s.avg_quiz_score+"%" : "-"}</span></div>
           <div class="sc-bar-row"><span class="sc-bar-lbl">Sims</span><div class="sc-bar-track"><div class="sc-bar-fill purple" style="width:${s.avg_sim_score}%"></div></div><span class="sc-bar-val">${s.avg_sim_score > 0 ? s.avg_sim_score+"%" : "-"}</span></div>
         </div>
-        ${chips ? `<div class="sc-results">${chips}</div>` : ""}
       </div>
     `;
   }).join("");

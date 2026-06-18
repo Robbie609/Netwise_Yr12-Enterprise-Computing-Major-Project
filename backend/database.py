@@ -734,10 +734,21 @@ def get_student_dashboard_data(user_id):
         for sim in sims_by_lesson.get(lesson_id, []):
             score = sim_results_by_sim.get(sim["simulation_id"])
             sim_scores.append({
+                "simulation_id": sim["simulation_id"],
                 "title": sim["title"],
                 "difficulty": sim["difficulty"],
                 "score": score,
             })
+
+        module_payload_for_lesson = []
+        for m in modules:
+            module_payload_for_lesson.append({
+                "module_id": m["module_id"],
+                "module_title": m["module_title"],
+                "order_no": m["order_no"],
+                "status": progress_by_module.get(m["module_id"], "Locked"),
+            })
+        module_payload_for_lesson.sort(key=lambda m: m["order_no"])
 
         lesson_payload.append({
             "lesson_id": lesson_id,
@@ -749,9 +760,11 @@ def get_student_dashboard_data(user_id):
             "status": lesson_status,
             "progress": progress_pct,
             "order_no": lesson_id,
+            "quiz_id": quiz["quiz_id"] if quiz else None,
             "quiz_title": quiz["title"] if quiz else None,
             "quiz_score": quiz_score,
             "sim_scores": sim_scores,
+            "modules": module_payload_for_lesson,
         })
 
     profile = {
@@ -977,3 +990,304 @@ def get_teacher_dashboard_data(user_id):
         "announcements": announcements,
     }
     return profile
+
+# ----------------------------
+# MODULE LOOKUP (single)
+# ----------------------------
+def get_module_by_id(module_id):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT module_id, lesson_id, module_title, order_no
+        FROM Modules
+        WHERE module_id = ?
+    """, (module_id,))
+
+    row = cursor.fetchone()
+    conn.close()
+
+    return dict(row) if row else None
+
+
+# ----------------------------
+# QUIZ / SIMULATION LOOKUP (single)
+# ----------------------------
+def get_quiz_by_id(quiz_id):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT quiz_id, lesson_id, title
+        FROM Quizzes
+        WHERE quiz_id = ?
+    """, (quiz_id,))
+
+    row = cursor.fetchone()
+    conn.close()
+
+    return dict(row) if row else None
+
+
+def get_simulation_by_id(simulation_id):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT simulation_id, lesson_id, title, difficulty
+        FROM Simulations
+        WHERE simulation_id = ?
+    """, (simulation_id,))
+
+    row = cursor.fetchone()
+    conn.close()
+
+    return dict(row) if row else None
+
+
+# ----------------------------
+# MODULE PROGRESS - WRITE
+# ----------------------------
+def get_module_progress_record(student_id, module_id):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT progress_id, student_id, module_id, status
+        FROM ModuleProgress
+        WHERE student_id = ? AND module_id = ?
+    """, (student_id, module_id))
+
+    row = cursor.fetchone()
+    conn.close()
+
+    return dict(row) if row else None
+
+
+def set_module_progress(student_id, module_id, status):
+    """
+    Inserts or updates a student's progress status for a module.
+    status should be one of: 'Locked', 'In Progress', 'Completed'.
+    """
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    existing = get_module_progress_record(student_id, module_id)
+
+    if existing:
+        cursor.execute("""
+            UPDATE ModuleProgress
+            SET status = ?
+            WHERE progress_id = ?
+        """, (status, existing["progress_id"]))
+    else:
+        cursor.execute("SELECT COUNT(*) AS c FROM ModuleProgress")
+        count = cursor.fetchone()["c"]
+        progress_id = "MP" + str(count + 1).zfill(4)
+
+        cursor.execute("""
+            INSERT INTO ModuleProgress (progress_id, student_id, module_id, status)
+            VALUES (?, ?, ?, ?)
+        """, (progress_id, student_id, module_id, status))
+
+    conn.commit()
+    conn.close()
+    return True
+
+
+# ----------------------------
+# QUIZ RESULTS - WRITE
+# ----------------------------
+def submit_quiz_result(student_id, quiz_id, score):
+    """
+    Records a new quiz attempt. Each submission is stored as its own row
+    so historical attempts are preserved; dashboards use the most recent
+    or best score via get_quiz_results_by_student_id.
+    """
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT COUNT(*) AS c FROM QuizResults")
+    count = cursor.fetchone()["c"]
+    result_id = "QR" + str(count + 1).zfill(4)
+
+    cursor.execute("""
+        INSERT INTO QuizResults (result_id, student_id, quiz_id, score)
+        VALUES (?, ?, ?, ?)
+    """, (result_id, student_id, quiz_id, score))
+
+    conn.commit()
+    conn.close()
+    return result_id
+
+
+def grade_quiz_submission(quiz_id, answers):
+    """
+    answers: dict mapping question_id -> selected option letter ("a"/"b"/"c"/"d").
+    Returns (score_percent, total_questions, correct_count, per_question_results).
+    """
+    questions = get_questions_by_quiz_id(quiz_id)
+    total = len(questions)
+
+    if total == 0:
+        return 0, 0, 0, []
+
+    correct_count = 0
+    per_question = []
+
+    for q in questions:
+        qid = q["question_id"]
+        submitted = (answers.get(qid) or "").strip().lower()
+        correct = (q["correct_answer"] or "").strip().lower()
+        is_correct = submitted == correct and submitted != ""
+
+        if is_correct:
+            correct_count += 1
+
+        per_question.append({
+            "question_id": qid,
+            "question_text": q["question_text"],
+            "submitted_answer": submitted,
+            "correct_answer": correct,
+            "is_correct": is_correct,
+        })
+
+    score_percent = round((correct_count / total) * 100)
+    return score_percent, total, correct_count, per_question
+
+
+# ----------------------------
+# SIMULATION RESULTS - WRITE
+# ----------------------------
+def submit_simulation_result(student_id, simulation_id, score):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT COUNT(*) AS c FROM SimulationResults")
+    count = cursor.fetchone()["c"]
+    sim_result_id = "SR" + str(count + 1).zfill(4)
+
+    cursor.execute("""
+        INSERT INTO SimulationResults (sim_result_id, student_id, simulation_id, score)
+        VALUES (?, ?, ?, ?)
+    """, (sim_result_id, student_id, simulation_id, score))
+
+    conn.commit()
+    conn.close()
+    return sim_result_id
+
+
+# ----------------------------
+# ACHIEVEMENTS - UNLOCK LOGIC
+# ----------------------------
+def has_achievement(student_id, achievement_id):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT student_achievement_id
+        FROM StudentAchievements
+        WHERE student_id = ? AND achievement_id = ?
+    """, (student_id, achievement_id))
+
+    row = cursor.fetchone()
+    conn.close()
+
+    return row is not None
+
+
+def grant_achievement(student_id, achievement_id):
+    """
+    Awards an achievement to a student if they don't already have it.
+    Returns True if newly granted, False if already owned.
+    """
+    if has_achievement(student_id, achievement_id):
+        return False
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT COUNT(*) AS c FROM StudentAchievements")
+    count = cursor.fetchone()["c"]
+    sa_id = "SA" + str(count + 1).zfill(4)
+
+    cursor.execute("""
+        INSERT INTO StudentAchievements (student_achievement_id, student_id, achievement_id)
+        VALUES (?, ?, ?)
+    """, (sa_id, student_id, achievement_id))
+
+    conn.commit()
+    conn.close()
+    return True
+
+
+def evaluate_achievements_for_student(student_id):
+    """
+    Checks all achievement-unlock conditions for a student against the
+    five seeded Achievements rows (A001-A005) and grants any newly
+    earned ones. Returns a list of achievement dicts that were newly
+    unlocked during this call (empty list if none).
+    """
+    newly_unlocked = []
+
+    all_achievements = {a["achievement_id"]: a for a in get_all_achievements()}
+
+    student = get_student_by_id(student_id)
+    if not student:
+        return newly_unlocked
+
+    all_lessons = get_all_lessons()
+    all_modules = get_all_modules()
+    quiz_results = get_quiz_results_by_student_id(student_id)
+    sim_results = get_simulation_results_by_student_id(student_id)
+    progress_rows = get_module_progress_by_student_id(student_id)
+
+    modules_by_lesson = {}
+    for m in all_modules:
+        modules_by_lesson.setdefault(m["lesson_id"], []).append(m)
+
+    progress_by_module = {p["module_id"]: p["status"] for p in progress_rows}
+
+    def lesson_is_completed(lesson_id):
+        mods = modules_by_lesson.get(lesson_id, [])
+        if not mods:
+            return False
+        return all(progress_by_module.get(m["module_id"]) == "Completed" for m in mods)
+
+    # A001 - First Steps: complete your first lesson
+    if "A001" in all_achievements:
+        if any(lesson_is_completed(l["lesson_id"]) for l in all_lessons):
+            if grant_achievement(student_id, "A001"):
+                newly_unlocked.append(all_achievements["A001"])
+
+    # A002 - Quiz Master: score 100% on a quiz
+    if "A002" in all_achievements:
+        if any(r["score"] == 100 for r in quiz_results):
+            if grant_achievement(student_id, "A002"):
+                newly_unlocked.append(all_achievements["A002"])
+
+    # A003 - Phishing Detective: pass the phishing simulation
+    if "A003" in all_achievements:
+        all_sims = {s["simulation_id"]: s for s in get_all_simulations()}
+        for r in sim_results:
+            sim = all_sims.get(r["simulation_id"])
+            if sim and "phishing" in (sim["title"] or "").lower() and r["score"] >= 70:
+                if grant_achievement(student_id, "A003"):
+                    newly_unlocked.append(all_achievements["A003"])
+                break
+
+    # A004 - Privacy Protector: complete Online Privacy lesson
+    if "A004" in all_achievements:
+        for lesson in all_lessons:
+            if "privacy" in (lesson["title"] or "").lower() and lesson_is_completed(lesson["lesson_id"]):
+                if grant_achievement(student_id, "A004"):
+                    newly_unlocked.append(all_achievements["A004"])
+                break
+
+    # A005 - Cyber Champion: complete all lessons
+    if "A005" in all_achievements:
+        if all_lessons and all(lesson_is_completed(l["lesson_id"]) for l in all_lessons):
+            if grant_achievement(student_id, "A005"):
+                newly_unlocked.append(all_achievements["A005"])
+
+    return newly_unlocked

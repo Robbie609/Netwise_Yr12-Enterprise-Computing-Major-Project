@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Netwiser | Lessons</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="student_dashboard.css">
+<link rel="stylesheet" href="lessons.css">
+</head>
+<body>
+
+<canvas id="bg-canvas"></canvas>
+<div class="bg-overlay"></div>
+
+<div id="loading-view">
+  <div class="loading-inner">
+    <svg class="loading-shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-4z"/><path d="M9 12l2 2 4-4"/>
+    </svg>
+    <span class="loading-label">Loading lessons…</span>
+  </div>
+</div>
+
+<div id="error-view" style="display:none">
+  <div class="error-inner">
+    <svg viewBox="0 0 24 24" fill="none" stroke="var(--error-red)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="40" height="40"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+    <p id="error-message">Something went wrong loading your lessons.</p>
+    <button class="btn-retry" id="retry-btn">Retry</button>
+  </div>
+</div>
+
+<div id="dashboard-view">
+
+  <nav class="navbar">
+    <div class="nav-left">
+      <div class="logo">
+        <img src="../../assets/images/Logo1.png" alt="Netwiser Logo">
+      </div>
+    </div>
+    <div class="nav-links">
+      <a href="student_dashboard.html" class="nav-item">Overview</a>
+      <a href="lessons.html" class="nav-item active">Lessons</a>
+      <a href="student_dashboard.html#results" class="nav-item">Results</a>
+      <a href="achievments/achievments.html" class="nav-item">Achievements</a>
+    </div>
+    <div class="profile-container">
+      <button class="nav-utility-btn" id="profile-toggle" aria-label="Profile menu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      </button>
+      <div class="profile-dropdown" id="profile-dropdown">
+        <div class="profile-name" id="profile-name">—</div>
+        <div class="profile-email" id="profile-email">—</div>
+        <div class="profile-meta-details">
+          <span class="meta-tag" id="profile-year-tag">—</span>
+          <span class="meta-tag" id="profile-class-tag">—</span>
+        </div>
+        <div class="dropdown-divider"></div>
+        <a href="#" class="dropdown-item" id="logout-btn">Sign Out</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="dashboard-container">
+    <div class="section-header-row">
+      <h2 class="section-title">Lessons</h2>
+      <span class="section-sub" id="lessons-sub">—</span>
+    </div>
+
+    <div class="lessons-toolbar">
+      <div class="filter-pills" id="filter-pills">
+        <button class="filter-pill active" data-filter="all">All</button>
+        <button class="filter-pill" data-filter="Completed">Completed</button>
+        <button class="filter-pill" data-filter="Current">In Progress</button>
+        <button class="filter-pill" data-filter="Locked">Locked</button>
+      </div>
+      <input type="text" id="search-input" class="search-input" placeholder="Search lessons…"/>
+    </div>
+
+    <div class="lessons-grid" id="lessons-grid"></div>
+
+    <div class="lesson-detail-panel" id="detail-panel" style="display:none">
+      <div class="dp-head">
+        <div>
+          <span class="dp-topic" id="dp-topic">—</span>
+          <h3 id="dp-title">—</h3>
+        </div>
+        <button class="dp-close" id="dp-close">&times;</button>
+      </div>
+      <p class="dp-desc" id="dp-desc">—</p>
+      <div class="progress-container"><div class="progress-bar" id="dp-progress-bar"></div></div>
+      <span class="dp-pct" id="dp-pct">0% COMPLETE</span>
+
+      <div class="dp-modules-block">
+        <h4 class="dp-subheading">Modules</h4>
+        <div class="dp-module-list" id="dp-module-list"></div>
+      </div>
+
+      <div class="dp-actions" id="dp-actions"></div>
+
+      <div class="dp-scores" id="dp-scores"></div>
+    </div>
+  </main>
+</div>
+
+<script src="lessons.js"></script>
+</body>
+</html>
