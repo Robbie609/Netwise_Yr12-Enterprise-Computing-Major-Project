@@ -86,7 +86,6 @@ function enterDashboard() {
 }
 
 function renderProfileFromSession() {
-  // Lightweight: pull display info from session, full profile not needed here.
   const sessionUser = JSON.parse(sessionStorage.getItem("netwiser_user") || "{}");
   document.getElementById("profile-name").textContent = sessionUser.username || "Student";
   document.getElementById("profile-email").textContent = sessionUser.email || "";

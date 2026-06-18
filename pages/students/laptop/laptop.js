@@ -1,9 +1,3 @@
-/* ==========================================================================
-   laptop.js - NetwiserOS Window Manager & Kernel
-   Boots the simulator, authenticates the session, and exposes a small
-   OS API (window.OS) that app modules (apps/*.js) register against.
-   ========================================================================== */
-
 const API_BASE = "http://127.0.0.1:8765";
 
 const OS = (() => {

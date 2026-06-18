@@ -9,10 +9,7 @@ from backend.database import *
 PORT = 8765
 LOGIN_PAGE = "pages/index/index.html"
 
-
-# ----------------------------
 # LOCAL SERVER
-# ----------------------------
 class LocalBridge(BaseHTTPRequestHandler):
 
     def do_OPTIONS(self):
@@ -28,9 +25,8 @@ class LocalBridge(BaseHTTPRequestHandler):
             self.send_header("Access-Control-Allow-Origin", "*")
             self.end_headers()
             self.wfile.write(json.dumps(data).encode("utf-8"))
-    # ------------------------
+
     # POST ROUTER
-    # ------------------------
     def do_POST(self):
         
         # LOGIN
@@ -80,9 +76,6 @@ class LocalBridge(BaseHTTPRequestHandler):
             self.send_header('Access-Control-Allow-Origin', '*')
             self.end_headers()
 
-            # ---------------------------------------------------------
-            # FIX: Wrap the dashboard payload inside a success envelope
-            # ---------------------------------------------------------
             if dashboard:
                 response_payload = {
                     "success": True,
@@ -245,9 +238,7 @@ class LocalBridge(BaseHTTPRequestHandler):
             self.wfile.write(
                 json.dumps(response_payload).encode('utf-8')
             )
-    # ------------------------
     # RESPONSE HANDLER
-    # ------------------------
     def respond(self, user):
         self.send_response(200)
         self.send_header('Content-type', 'application/json')
@@ -274,10 +265,7 @@ class LocalBridge(BaseHTTPRequestHandler):
     def log_message(self, format, *args):
         pass
 
-
-# ----------------------------
 # START SERVER
-# ----------------------------
 def start_engine():
     server = HTTPServer(('127.0.0.1', PORT), LocalBridge)
     server.serve_forever()

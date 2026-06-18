@@ -1,4 +1,3 @@
-/* Browser - address-bar navigation across WORLD's sandboxed sites, plus a real homepage. */
 OS.registerApp("browser", {
   label: "SecureWeb Browser",
   icon: "browser",

@@ -1,4 +1,3 @@
-/* Settings - account info plus interactive security toggles. */
 OS.registerApp("settings", {
   label: "Settings",
   icon: "settings",

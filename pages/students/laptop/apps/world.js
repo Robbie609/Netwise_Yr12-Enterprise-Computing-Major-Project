@@ -1,19 +1,5 @@
-/* ==========================================================================
-   world.js - NetwiserOS shared sandbox state
-   A single in-memory "world" that Terminal, Files, Browser, Mail and
-   Notepad all read from and write to, so actions in one app are visible
-   and consequential in the others. Resets each boot (open sandbox, no
-   fixed lesson path) but persists for the lifetime of the session.
-   ========================================================================== */
-
 const WORLD = (() => {
 
-  /* ---------------------------------------------------------------------
-     VIRTUAL FILESYSTEM
-     A simple tree of folders/files. Files can carry a "kind" that other
-     apps key off of (text, csv, eml, exe, log) plus arbitrary metadata
-     used for challenges (e.g. malware flag, phishing flag).
-     --------------------------------------------------------------------- */
   const fs = {
     name: "This PC",
     type: "dir",
@@ -140,9 +126,9 @@ Netwiser IT Support`,
     return true;
   }
 
-  /* ---------------------------------------------------------------------
+  /* 
      SCAN ENGINE - used by Terminal `scan`, Files "Scan", and Scanner app
-     --------------------------------------------------------------------- */
+*/
   function scanFile(path) {
     const file = getFile(path);
     if (!file) return { ok: false, message: `No such file: ${path}` };
@@ -168,9 +154,9 @@ Netwiser IT Support`,
     return { ok: true, threat: false, message: `Scan complete: ${path}\nNo threats found.` };
   }
 
-  /* ---------------------------------------------------------------------
+  /* 
      WHOIS / DOMAIN INTEL - used by Terminal `whois` and `ping`
-     --------------------------------------------------------------------- */
+      */
   const domainIntel = {
     "netwiser.local": { registrar: "Netwiser Internal Registry", created: "2019-01-01", reputation: "trusted", ip: "10.0.0.1" },
     "netwiser-secure-login.verify-account.cc": { registrar: "NameForge Anonymous Reg.", created: "2024-05-19", reputation: "malicious", ip: "185.220.101.13", notes: "Registered 2 days before phishing email was sent. Hosted in a known bulletproof-hosting range. .cc TLD often abused for phishing." },
@@ -201,9 +187,9 @@ Netwiser IT Support`,
     return `Pinging ${host} [${ip}] with 32 bytes of data:\n${lines.join("\n")}\n\nPing statistics for ${ip}:\n    Packets: Sent = 4, Received = 4, Lost = 0 (0% loss)`;
   }
 
-  /* ---------------------------------------------------------------------
+  /* 
      BROWSER SITES - simple key:URL -> rendered page model
-     --------------------------------------------------------------------- */
+      */
   const sites = {
     "netwiser.local/home": {
       title: "Netwiser Home", secure: true,
@@ -256,9 +242,9 @@ Netwiser IT Support`,
     return sites[url] || null;
   }
 
-  /* ---------------------------------------------------------------------
+  /* 
      MAILBOX - shared, mutable inbox
-     --------------------------------------------------------------------- */
+      */
   const mailbox = [
     {
       id: "m1",
@@ -313,22 +299,22 @@ Netwiser IT Support`,
     },
   ];
 
-  /* ---------------------------------------------------------------------
+  /* 
      NOTES - persisted across notepad open/close within the session
-     --------------------------------------------------------------------- */
+      */
   let notesContent = `Cybersecurity Notes
-• Always verify the source
-• Use strong, unique passwords
-• Enable two-factor authentication
-• Keep software up to date
+You have new mail! 
+• Spot the Panic
+• Check the Sender
+• Guard Your Secrets
 • Think before you click`;
 
   function getNotes() { return notesContent; }
   function setNotes(text) { notesContent = text; }
 
-  /* ---------------------------------------------------------------------
+  /* 
      SIMPLE SCORE / EVENT LOG - lets apps react to player actions
-     --------------------------------------------------------------------- */
+      */
   const log = [];
   function record(event) { log.push({ event, time: new Date() }); }
 

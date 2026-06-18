@@ -1,4 +1,3 @@
-/* Email Client - phishing-detection inbox wired to WORLD.mailbox. */
 OS.registerApp("email", {
   label: "Mail",
   icon: "email",

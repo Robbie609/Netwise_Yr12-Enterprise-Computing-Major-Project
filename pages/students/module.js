@@ -183,7 +183,6 @@ async function markComplete(moduleId) {
       showAchievementToast(data.unlocked_achievements);
     }
 
-    // Refresh local state and re-render
     await initSession();
   } catch (e) {
     btn.disabled = false;

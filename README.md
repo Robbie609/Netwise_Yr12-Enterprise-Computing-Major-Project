@@ -114,6 +114,7 @@ Before running NetWiser, ensure your system meets the following requirements:
 * Windows 10 or Windows 11
 * Python 3.10 or later
 * Visual Studio Code (VS Code)
+* SQLite Viewer
 * At least 100 MB of free storage
 
 ### 📥 Required Downloads
@@ -135,7 +136,15 @@ Install the Python extension published by Microsoft.
 
 ### 📂 Project Installation
 
-1. 
+1. Navigate to the Netwiser GitHub repository.
+2. Select Code → Download ZIP.
+3. Extract the ZIP file to a suitable location.
+4. Open Visual Studio Code.
+5. Select File → Open Folder.
+6. Open the extracted Netwiser project folder.
+7. Open a new terminal in Visual Studio Code.
+8. Verify that the database file (netwiser.db) is located within the backend folder.
+
 
 ### ▶️ Running NetWiser
 
@@ -145,7 +154,7 @@ Open a terminal in the project folder and run:
 python netwiser_engine.py
 ```
 
-The NetWiser first page should appear.
+The NetWiser landing page should appear.
 
 ## ✅ Verifying Installation
 
@@ -156,6 +165,23 @@ The installation is successful if:
 * Teacher dashboards display teacher specific information
 * Data is retrieved from the SQLite database
 * Lessons, quizzes, achievements, and progress appear correctly
+
+## 🔑Account Credentials
+Students:
+- Rithwick → Username: Ricky, Password: Netwiser1
+- Rowan → Username: RowanR, Password: Netwiser2
+- Rigved → Username: RigvedG, Password: Netwiser3
+- Sai → Username: SaiR, Password: Netwiser4
+- Oliver Mahady → Username: OliverM, Password: Netwiser5
+- Daniel Wang → Username: DanielW, Password: Netwiser6
+- Haydan Wang → Username: HaydanW, Password: Netwiser7
+- Kahim T. → Username: KahimT, Password: Netwiser8
+- Jerrard H. → Username: JerrardH, Password: Netwiser9
+- Oliver L. → Username: OliverL, Password: Netwiser10
+
+Teachers:
+- Blake White → Username: MrWhite, Password: Netwiser100
+- Andrew Simpson → Username: MrSimpson, Password: Netwiser200
 
 ## 🎉 Installation Complete
 

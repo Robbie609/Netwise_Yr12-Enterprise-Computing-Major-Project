@@ -1,17 +1,9 @@
-/* ==========================================================================
-   student_dashboard.js
-   All data sourced from the backend via /student_dashboard (database.py).
-   Zero hardcoded student, lesson, quiz, achievement, or progress data.
-   ========================================================================== */
-
 const API_BASE = "http://127.0.0.1:8765";
 
 let activeProfile = null;
 let activeLessonId = null;
 
-/* ─────────────────────────────────────────────────────────────────────────
-   ICONS
-───────────────────────────────────────────────────────────────────────── */
+/* ICONS*/
 const ICON_SHIELD  = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-4z"/><path d="M9 12l2 2 4-4"/></svg>`;
 const ICON_GLOBE   = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>`;
 const ICON_LOCK    = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>`;
@@ -34,9 +26,7 @@ function scoreClass(score) {
   return "score-low";
 }
 
-/* ─────────────────────────────────────────────────────────────────────────
-   INIT
-───────────────────────────────────────────────────────────────────────── */
+/* INIT*/
 document.addEventListener("DOMContentLoaded", () => {
   bindNavEvents();
   bindAIEvents();
@@ -44,9 +34,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initBgCanvas();
 });
 
-/* ─────────────────────────────────────────────────────────────────────────
-   SESSION
-───────────────────────────────────────────────────────────────────────── */
+/* SESSION*/
 async function initSession() {
   const stored = sessionStorage.getItem("netwiser_user");
   if (!stored) { redirectToLogin(); return; }
@@ -89,9 +77,7 @@ function logout() {
   window.location.href = "../login/login.html";
 }
 
-/* ─────────────────────────────────────────────────────────────────────────
-   NAV
-───────────────────────────────────────────────────────────────────────── */
+/* NAV*/
 function bindNavEvents() {
   const toggle   = document.getElementById("profile-toggle");
   const dropdown = document.getElementById("profile-dropdown");
@@ -114,9 +100,7 @@ function bindNavEvents() {
   });
 }
 
-/* ─────────────────────────────────────────────────────────────────────────
-   RENDER PIPELINE
-───────────────────────────────────────────────────────────────────────── */
+/* RENDER PIPELINE*/
 function renderDashboard() {
   if (!activeProfile) return;
   renderProfile();
@@ -128,7 +112,6 @@ function renderDashboard() {
   renderResults();
   renderAIHistory();
 
-  // Auto-select first accessible lesson
   const lessons = activeProfile.lessons || [];
   const focus =
     lessons.find(l => l.status === "Current") ||
@@ -346,9 +329,9 @@ function renderAIHistory() {
   log.scrollTop = log.scrollHeight;
 }
 
-/* ─────────────────────────────────────────────────────────────────────────
+/* 
    LESSON PREVIEW
-───────────────────────────────────────────────────────────────────────── */
+ */
 function selectLesson(lessonId) {
   const lesson = (activeProfile.lessons || []).find(l => l.lesson_id === lessonId);
   if (!lesson) return;
@@ -364,7 +347,6 @@ function selectLesson(lessonId) {
   bar.style.width = `${lesson.progress}%`;
   pctEl.textContent = `${lesson.progress}% COMPLETE`;
 
-  // Action button
   const btn  = document.getElementById("preview-action-btn");
   const card = document.getElementById("preview-card");
   btn.disabled = false;
@@ -383,7 +365,6 @@ function selectLesson(lessonId) {
     btn.disabled = true;
   }
 
-  // Inline scores
   const scoresEl = document.getElementById("preview-scores");
   const rows = [];
   if (lesson.quiz_title && lesson.quiz_score !== null && lesson.quiz_score !== undefined) {
@@ -405,15 +386,12 @@ function selectLesson(lessonId) {
   });
   scoresEl.innerHTML = rows.join("");
 
-  // Highlight roadmap
   document.querySelectorAll(".tree-node-v").forEach(n => {
     n.classList.toggle("active-selection", n.dataset.lessonId === lessonId);
   });
 }
 
-/* ─────────────────────────────────────────────────────────────────────────
-   AI WIDGET
-───────────────────────────────────────────────────────────────────────── */
+/*AI WIDGET*/
 function bindAIEvents() {
   const fab      = document.getElementById("ai-fab-btn");
   const win      = document.getElementById("ai-window");
@@ -429,7 +407,6 @@ function bindAIEvents() {
     if (!text) return;
     const log = document.getElementById("ai-chat-log");
 
-    // Remove empty-state if present
     const empty = log.querySelector(".empty-state");
     if (empty) empty.remove();
 
@@ -451,9 +428,7 @@ function bindAIEvents() {
   input.addEventListener("keydown", e => { if (e.key === "Enter") send(); });
 }
 
-/* ─────────────────────────────────────────────────────────────────────────
-   BACKGROUND CANVAS - animated binary particles
-───────────────────────────────────────────────────────────────────────── */
+/* BACKGROUND CANVAS - animated binary particles*/
 function initBgCanvas() {
   const canvas = document.getElementById("bg-canvas");
   const ctx    = canvas.getContext("2d");
@@ -498,9 +473,7 @@ function initBgCanvas() {
   draw();
 }
 
-/* ─────────────────────────────────────────────────────────────────────────
-   UTIL
-───────────────────────────────────────────────────────────*/
+/* UTIL*/
 function escHtml(str) {
     return String(str ?? "")
         .replace(/&/g, "&amp;")

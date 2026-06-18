@@ -5,25 +5,25 @@ import hashlib
 DB_PATH = os.path.join(os.path.dirname(__file__), "netwiser.db")
 
 
-# ----------------------------
+# 
 # CONNECTION
-# ----------------------------
+# 
 def get_connection():
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
     return conn
 
 
-# ----------------------------
+# 
 # PASSWORD HASHING
-# ----------------------------
+# 
 def hash_password(password):
     return hashlib.sha256(password.encode()).hexdigest()
 
 
-# ----------------------------
+# 
 # LOGIN
-# ----------------------------
+# 
 def validate_login(identifier, password):
     conn = get_connection()
     cursor = conn.cursor()
@@ -46,9 +46,9 @@ def validate_login(identifier, password):
     return (user["user_id"], user["username"], user["email"], user["role"])
 
 
-# ----------------------------
+# 
 # SIGNUP
-# ----------------------------
+# 
 def create_user(username, email, password, role):
     conn = get_connection()
     cursor = conn.cursor()
@@ -77,9 +77,9 @@ def create_user(username, email, password, role):
         conn.close()
 
 
-# ----------------------------
+# 
 # USER RETRIEVAL
-# ----------------------------
+# 
 def get_user_by_id(user_id):
     conn = get_connection()
     cursor = conn.cursor()
@@ -96,9 +96,9 @@ def get_user_by_id(user_id):
     return dict(row) if row else None
 
 
-# ----------------------------
+# 
 # STUDENT RETRIEVAL
-# ----------------------------
+# 
 def get_student_by_user_id(user_id):
     conn = get_connection()
     cursor = conn.cursor()
@@ -148,9 +148,9 @@ def get_students_by_class_id(class_id):
     return [dict(r) for r in rows]
 
 
-# ----------------------------
+# 
 # TEACHER RETRIEVAL
-# ----------------------------
+# 
 def get_teacher_by_user_id(user_id):
     conn = get_connection()
     cursor = conn.cursor()
@@ -217,9 +217,9 @@ def get_teacher_by_class_id(class_id):
     return dict(row) if row else None
 
 
-# ----------------------------
+# 
 # LESSON / MODULE / QUIZ / SIMULATION RETRIEVAL
-# ----------------------------
+# 
 def get_all_lessons():
     conn = get_connection()
     cursor = conn.cursor()
@@ -351,9 +351,9 @@ def get_questions_by_quiz_id(quiz_id):
     return [dict(r) for r in rows]
 
 
-# ----------------------------
+# 
 # PROGRESS RETRIEVAL
-# ----------------------------
+# 
 def get_module_progress_by_student_id(student_id):
     conn = get_connection()
     cursor = conn.cursor()
@@ -390,9 +390,9 @@ def get_module_progress_for_students(student_ids):
     return [dict(r) for r in rows]
 
 
-# ----------------------------
+# 
 # QUIZ RESULTS RETRIEVAL
-# ----------------------------
+# 
 def get_quiz_results_by_student_id(student_id):
     conn = get_connection()
     cursor = conn.cursor()
@@ -429,9 +429,9 @@ def get_quiz_results_for_students(student_ids):
     return [dict(r) for r in rows]
 
 
-# ----------------------------
+# 
 # SIMULATION RESULTS RETRIEVAL
-# ----------------------------
+# 
 def get_simulation_results_by_student_id(student_id):
     conn = get_connection()
     cursor = conn.cursor()
@@ -468,9 +468,9 @@ def get_simulation_results_for_students(student_ids):
     return [dict(r) for r in rows]
 
 
-# ----------------------------
+# 
 # ACHIEVEMENT RETRIEVAL
-# ----------------------------
+# 
 def get_all_achievements():
     conn = get_connection()
     cursor = conn.cursor()
@@ -505,9 +505,9 @@ def get_achievements_by_student_id(student_id):
     return [dict(r) for r in rows]
 
 
-# ----------------------------
+# 
 # ANNOUNCEMENT RETRIEVAL
-# ----------------------------
+# 
 def get_announcements_by_teacher_id(teacher_id):
     conn = get_connection()
     cursor = conn.cursor()
@@ -544,9 +544,9 @@ def create_announcement(teacher_id, title, message, created_at):
     return notification_id
 
 
-# ----------------------------
+# 
 # AI CHAT RETRIEVAL
-# ----------------------------
+# 
 def get_ai_chats_by_student_id(student_id):
     conn = get_connection()
     cursor = conn.cursor()
@@ -583,9 +583,9 @@ def create_ai_chat(student_id, question, response):
     return chat_id
 
 
-# ----------------------------
+# 
 # STUDENT FEEDBACK RETRIEVAL
-# ----------------------------
+# 
 def get_feedback_by_student_id(student_id):
     conn = get_connection()
     cursor = conn.cursor()
@@ -618,9 +618,9 @@ def get_feedback_by_lesson_id(lesson_id):
     return [dict(r) for r in rows]
 
 
-# ----------------------------
+# 
 # DASHBOARD DATA RETRIEVAL - STUDENT
-# ----------------------------
+# 
 def get_student_dashboard_data(user_id):
     """
     Builds the full payload required by the Student Dashboard for the
@@ -991,9 +991,9 @@ def get_teacher_dashboard_data(user_id):
     }
     return profile
 
-# ----------------------------
+# 
 # MODULE LOOKUP (single)
-# ----------------------------
+# 
 def get_module_by_id(module_id):
     conn = get_connection()
     cursor = conn.cursor()
@@ -1010,9 +1010,9 @@ def get_module_by_id(module_id):
     return dict(row) if row else None
 
 
-# ----------------------------
+# 
 # QUIZ / SIMULATION LOOKUP (single)
-# ----------------------------
+# 
 def get_quiz_by_id(quiz_id):
     conn = get_connection()
     cursor = conn.cursor()
@@ -1045,9 +1045,9 @@ def get_simulation_by_id(simulation_id):
     return dict(row) if row else None
 
 
-# ----------------------------
+# 
 # MODULE PROGRESS - WRITE
-# ----------------------------
+# 
 def get_module_progress_record(student_id, module_id):
     conn = get_connection()
     cursor = conn.cursor()
@@ -1095,9 +1095,9 @@ def set_module_progress(student_id, module_id, status):
     return True
 
 
-# ----------------------------
+# 
 # QUIZ RESULTS - WRITE
-# ----------------------------
+# 
 def submit_quiz_result(student_id, quiz_id, score):
     """
     Records a new quiz attempt. Each submission is stored as its own row
@@ -1156,9 +1156,9 @@ def grade_quiz_submission(quiz_id, answers):
     return score_percent, total, correct_count, per_question
 
 
-# ----------------------------
+# 
 # SIMULATION RESULTS - WRITE
-# ----------------------------
+# 
 def submit_simulation_result(student_id, simulation_id, score):
     conn = get_connection()
     cursor = conn.cursor()
@@ -1177,9 +1177,9 @@ def submit_simulation_result(student_id, simulation_id, score):
     return sim_result_id
 
 
-# ----------------------------
+# 
 # ACHIEVEMENTS - UNLOCK LOGIC
-# ----------------------------
+# 
 def has_achievement(student_id, achievement_id):
     conn = get_connection()
     cursor = conn.cursor()

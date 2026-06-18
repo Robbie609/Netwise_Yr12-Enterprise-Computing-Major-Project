@@ -1,4 +1,3 @@
-/* File Explorer - browses WORLD's virtual filesystem; open/scan/quarantine files. */
 OS.registerApp("files", {
   label: "File Explorer",
   icon: "files",

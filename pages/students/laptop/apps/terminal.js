@@ -1,4 +1,3 @@
-/* Terminal - full command shell operating on WORLD's virtual filesystem. */
 OS.registerApp("terminal", {
   label: "Terminal",
   icon: "terminal",

@@ -1,4 +1,3 @@
-/* Security Scanner - walks WORLD's filesystem for flagged threats. */
 OS.registerApp("scanner", {
   label: "Security Scanner",
   icon: "scanner",
